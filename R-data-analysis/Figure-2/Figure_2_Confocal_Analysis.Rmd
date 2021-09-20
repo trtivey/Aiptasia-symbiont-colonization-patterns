@@ -1,0 +1,310 @@
+---
+title: "Figure 2 Confocal Analysis"
+author: "Trevor Tivey"
+date: "9/20/2021"
+output: html_document
+---
+# Setup
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reshape2)
+library(png)
+library(raster)
+library(rgdal)
+library(grid)
+library(ggplot2)
+library(ggpubr)
+library(stats)
+library(car)
+library(multcomp)
+```
+
+# Data input
+```{r}
+setwd(".")
+Fig_2 <- read.csv("Figure_2_Data_Analysis.csv", header = T, sep = ,)
+
+Fig_2_H2 <- subset(Fig_2, STRAIN == "H2")
+
+Fig_2_H2_long <- reshape2::melt(Fig_2_H2, id.vars= c(1:3), variable.name = "celltype", value.name = "cells")
+
+Fig_2_total_subset <- subset(Fig_2_H2_long, (celltype %in% c("Bsumtotal","T.TOTAL")))
+
+Fig_2_cluster_subset <- subset(Fig_2_H2_long, (celltype %in% c("TSsum","TDsum","TTsum","TQsum")))
+
+Fig_2_cluster_subset$Day <- as.numeric(Fig_2_cluster_subset$Day)
+Fig_2_cluster_subset$factorday <- as.factor(Fig_2_cluster_subset$Day)
+
+```
+
+# Fig 2A image
+```{r}
+Fig2A <- png::readPNG("./Image11-4-23-16-0006.png")
+Plot_Fig2A <- ggplot() + background_image(Fig2A) + theme(plot.margin = margin(t=.75, l=.75, r=.5, b=.5, unit = "cm"))
+
+```
+
+# Fig 2B plot
+```{r}
+Plot_Fig2B <- ggplot(Fig_2_cluster_subset,aes(x=Day,y=cells,fill=celltype)) +  
+  stat_summary(fun.data=mean_se,position=position_dodge(.6),geom="errorbar",color = "grey", width=.5) +
+    stat_summary(fun=mean,position=position_dodge(width=.6),geom="bar", width = .5) +
+  theme_linedraw() + scale_fill_manual(values = c("darkblue","royalblue2","steelblue2","grey51"), name = "Cluster\n   size", labels = c("Singlet","Doublet","Triplet","Quadruplet")) + ylab("Mean # of cells\n per image stack") + scale_x_continuous(limits = c(0,7.5), breaks = c(0,1,2,3,4,5,6,7)) + xlab("Days post inoculation") + theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(ylim =c(0,30)) + scale_y_continuous(breaks = c(0,10,20,30,40,50)) +
+  annotate("text", x = c(6.99), y = c(4.75), size = 2.5, label="**", hjust=0, vjust=0, fontface = "italic") +
+  annotate("text", x = c(7.17), y = c(1.75), size = 2.5, label="*", hjust=0, vjust=0, fontface = "italic") + 
+  theme(plot.margin = margin(t=.5, l=.5, r=.5, b=.5, unit = "cm"))
+
+Plot_Fig2B
+```
+
+# Final Figure 2
+```{r}
+Plot_Fig_2_combined <- ggarrange(Plot_Fig2A, Plot_Fig2B,
+                                 labels = c("A","B"),
+                                 ncol = 1, nrow = 2, heights = c(2,1.5),
+                                 common.legend = TRUE, legend = "bottom")
+Plot_Fig_2_combined
+ggsave("Plot_Fig_2_combined.png", height = 7, width = 4, dpi = 600)
+
+```
+
+# Data Analysis
+# Singlet model no transform
+```{r}
+
+mod.b <- lm(cells ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TSsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Singlet model transform
+```{r}
+Fig_2_cluster_subset$root_transform <- (Fig_2_cluster_subset$cells)^(1/2)
+
+mod.b <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TSsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Doublet model no transform
+```{r}
+
+mod.b <- lm(cells ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TDsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Doublet model transform
+```{r}
+Fig_2_cluster_subset$root_transform <- (Fig_2_cluster_subset$cells)^(1/2)
+
+mod.b <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TDsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Triplet model no transform
+```{r}
+
+mod.b <- lm(cells ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TTsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Triplet model no transform
+```{r}
+Fig_2_cluster_subset$root_transform <- (Fig_2_cluster_subset$cells)^(1/2)
+
+mod.b <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TTsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+
+# Quad model no transform
+```{r}
+
+mod.b <- lm(cells ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TQsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Quad model transform
+```{r}
+Fig_2_cluster_subset$root_transform <- (Fig_2_cluster_subset$cells)^(1/2)
+
+mod.b <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TQsum"))
+summary(mod.b)
+
+#assess normality
+b.res = residuals(mod.b)
+summary(b.res)
+qqPlot(b.res)
+hist(b.res)
+boxplot(b.res)
+shapiro.test(b.res)
+
+#assess homoscedasticity
+plot(fitted(mod.b),b.res);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.b),b.res));
+
+Anova(mod.b,test.statistic = 'F')
+```
+
+# Model selection
+```{r}
+
+mod.a <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TSsum"))
+mod.b <- lm(root_transform ~ factorday, data = subset(Fig_2_cluster_subset, celltype == "TSsum"))
+mod.c <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TDsum"))
+mod.d <- lm(root_transform ~ factorday, data = subset(Fig_2_cluster_subset, celltype == "TDsum"))
+mod.e <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TTsum"))
+mod.f <- lm(root_transform ~ factorday, data = subset(Fig_2_cluster_subset, celltype == "TTsum"))
+mod.g <- lm(root_transform ~ factorday * Anemone, data = subset(Fig_2_cluster_subset, celltype == "TQsum"))
+mod.h <- lm(root_transform ~ factorday, data = subset(Fig_2_cluster_subset, celltype == "TQsum"))
+
+anova(mod.b,mod.a)
+anova(mod.d,mod.c)
+anova(mod.f,mod.a)
+anova(mod.h,mod.g)
+
+```
+# Anova F-tests
+```{r}
+Anova(mod.b,test.statistic = 'F')
+Anova(mod.d,test.statistic = 'F')
+Anova(mod.f,test.statistic = 'F')
+Anova(mod.h,test.statistic = 'F')
+
+```
+
+# Table glht function
+```{r}
+table_glht <- function(x) {
+  pq <- summary(x)$test
+  mtests <- cbind(pq$coefficients, pq$sigma, pq$tstat, pq$pvalues)
+  error <- attr(pq$pvalues, "error")
+  pname <- switch(x$alternativ, less = paste("Pr(<", ifelse(x$df ==0, "z", "t"), ")", sep = ""), 
+  greater = paste("Pr(>", ifelse(x$df == 0, "z", "t"), ")", sep = ""), two.sided = paste("Pr(>|",ifelse(x$df == 0, "z", "t"), "|)", sep = ""))
+  colnames(mtests) <- c("Estimate", "Std. Error", ifelse(x$df ==0, "z value", "t value"), pname)
+  return(mtests)}
+```
+
+# Tukey Tests
+```{r}
+sumb <- summary(glht(mod.b, linfct=mcp(factorday ="Tukey")))
+sumbt <- table_glht(sumb)
+write.csv(sumbt, "tukey_confocal_singlet.csv")
+
+sumd <- summary(glht(mod.d, linfct=mcp(factorday ="Tukey")))
+sumdt <- table_glht(sumd)
+write.csv(sumdt, "tukey_confocal_doublet.csv")
+
+sumf <- summary(glht(mod.f, linfct=mcp(factorday ="Tukey")))
+sumft <- table_glht(sumf)
+write.csv(sumft, "tukey_confocal_triplet.csv")
+
+sumh <- summary(glht(mod.h, linfct=mcp(factorday ="Tukey")))
+sumht <- table_glht(sumh)
+write.csv(sumht, "tukey_confocal_quad.csv")
+```
+
