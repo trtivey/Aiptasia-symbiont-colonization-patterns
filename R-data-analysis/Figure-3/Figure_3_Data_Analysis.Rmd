@@ -1,7 +1,7 @@
 ---
 title: "Figure_3_Data_Analysis"
 author: "Trevor Tivey"
-date: "9/20/2021"
+date: "1/17/2022"
 output: html_document
 ---
 # Setup
@@ -181,9 +181,15 @@ clusts_plus_one <- clusts_plus_one %>%
 clusts_plus_one <- clusts_plus_one %>%
     mutate(Xfour = dplyr::select(., X2.001:X2.801) %>% rowSums(na.rm = TRUE))
 clusts_plus_one <- clusts_plus_one %>%
+    mutate(Xthreefour = dplyr::select(., X1.251:X2.801) %>% rowSums(na.rm = TRUE))
+clusts_plus_one <- clusts_plus_one %>%
     mutate(Xfive = dplyr::select(., X3.001:X3.301) %>% rowSums(na.rm = TRUE))
 clusts_plus_one <- clusts_plus_one %>%
     mutate(X6to9 = dplyr::select(., X3.501:X5.001) %>% rowSums(na.rm = TRUE))
+clusts_plus_one <- clusts_plus_one %>%
+    mutate(X5to10 = dplyr::select(., X3.001:X5.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_one <- clusts_plus_one %>%
+    mutate(Xover10 = dplyr::select(., X6.001:X999.501) %>% rowSums(na.rm = TRUE))
 clusts_plus_one <- clusts_plus_one %>%
     mutate(X10to15 = dplyr::select(., X5.501:X8.001) %>% rowSums(na.rm = TRUE))
 clusts_plus_one <- clusts_plus_one %>%
@@ -219,6 +225,12 @@ clusts_26_one <- subset(clusts_26_one, (cluster_type %in% c("Xone","Xtwo","Xthre
 clusts_32_one <- subset(clusts_plus_long_one, Treatment == "32")
 clusts_32_one <- subset(clusts_32_one, (cluster_type %in% c("Xone","Xtwo","Xthree","Xfour","Xfive","X6to9","X10to15","Xover15","Xover50")))
 
+
+clusts_26_one <- subset(clusts_plus_long_one, Treatment == "26")
+clusts_26_one <- subset(clusts_26_one, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+clusts_32_one <- subset(clusts_plus_long_one, Treatment == "32")
+clusts_32_one <- subset(clusts_32_one, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
 ```
 
 # Counting total clusters
@@ -607,33 +619,14 @@ clusts_plus_one_plot <- subset(clusts_plus_one, day != "NA")
 
 ```
 
-# Visualization
 
-```{r}
-plot_cells_v_clusters <- ggplot(clusts_plus_one_plot,aes(x=numberofclusters.1,y=clustersize,color=Treatmentfactor)) +  geom_point()
-
-plot_cells_v_clusters
-
-plot_cells_v_clusters_day <- ggplot(clusts_plus_one_plot,aes(x=numberofclusters.1,y=clustersize,fill=Treatmentfactor, shape=Treatmentfactor)) +  geom_point() +facet_wrap(~day, nrow=1) +
-  theme_linedraw() + 
-  scale_shape_manual(values = c(21,22), name = "Treatment", labels = c("26","32")) +
-  scale_fill_manual(values = c("darkorange","white"), name = "Treatment", labels = c("26","32")) +
-  theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + xlab("\n # of clusters per sample (days post-inoculation)") + ylab("# of cells per sample")
-
-plot_cells_v_clusters_day
-```
-
-```{r}
-plot_cells_v_clusters_day_final <-
-plot_cells_v_clusters_day + theme(strip.background = element_rect(
-     color="black", fill="grey", linetype="solid"), strip.text.x = element_text(color = "black"))
-plot_cells_v_clusters_day_final
-
-```
 
 ## Statistics
 
-
+# Interaction between day and temperature treatment
+```{r}
+clusts_plus_one_plot$int <- interaction(clusts_plus_one_plot$Treatmentfactor, clusts_plus_one_plot$day)
+```
 
 ```{r}
 
@@ -696,6 +689,7 @@ clusts_plus_one_plot %>%
     group_by(int) %>% 
     summarise(mean_hist_sum = mean(hist_sum))
 ```
+
 # plot data transformations
 ```{r}
 #plot average xone per day
@@ -709,10 +703,6 @@ qplot(data = clusts_plus_one_plot, y = sqrt(Xone), x = day, group = Treatmentfac
 qplot(data = clusts_plus_one_plot, y = (Xone)^(1/4), x = day, group = Treatmentfactor, color = Treatmentfactor)
 ```
 
-# interaction
-```{r}
-clusts_plus_one_plot$int <- interaction(clusts_plus_one_plot$Treatmentfactor, clusts_plus_one_plot$day)
-```
 
 # 1
 ```{r}
@@ -810,6 +800,30 @@ lines(smooth.spline(fitted(mod.mf4),mf.res4));
 summary(glht(mod.mf4, linfct=mcp(int ="Tukey")))
 ```
 
+# 3to4
+```{r}
+clusts_plus_one_plot$sqthreefour <- (clusts_plus_one_plot$Xthreefour)^(1/2)
+
+mod.mf3 <- lmer(sqthreefour ~ int + (1 | Plate), data = clusts_plus_one_plot)
+summary(mod.mf3)
+
+#assess normality
+mf.res3 = residuals(mod.mf3)
+summary(mf.res3)
+qqPlot(mf.res3)
+hist(mf.res3)
+boxplot(mf.res3)
+shapiro.test(mf.res3)
+
+#assess homoscedasticity
+plot(fitted(mod.mf3),mf.res3);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.mf3),mf.res3));
+
+summary(glht(mod.mf3, linfct=mcp(int ="Tukey")))
+```
+
+
 # 5
 ```{r}
 clusts_plus_one_plot$sqfive <- (clusts_plus_one_plot$Xfive)^(1/2)
@@ -833,9 +847,33 @@ lines(smooth.spline(fitted(mod.mf5),mf.res5));
 summary(glht(mod.mf5, linfct=mcp(int ="Tukey")))
 ```
 
+# 5-10
+```{r}
+clusts_plus_one_plot$sq5to10 <- (clusts_plus_one_plot$X5to10)^(1/2)
+
+mod.mf6 <- lmer(sq5to10 ~ int + (1 | Plate), data = clusts_plus_one_plot)
+summary(mod.mf6)
+
+#assess normality
+mf.res6 = residuals(mod.mf6)
+summary(mf.res6)
+qqPlot(mf.res6)
+hist(mf.res6)
+boxplot(mf.res6)
+shapiro.test(mf.res6)
+
+#assess homoscedasticity
+plot(fitted(mod.mf6),mf.res6);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.mf6),mf.res6));
+
+summary(glht(mod.mf6, linfct=mcp(int ="Tukey")))
+```
+
+
 # 6-9
 ```{r}
-clusts_plus_one_plot$sqsix <- (clusts_plus_one_plot$X6to9)^(1/2)
+clusts_plus_one_plot$sqsix <- (clusts_plus_one_plot$X10to15)^(1/2)
 
 mod.mf6 <- lmer(sqsix ~ int + (1 | Plate), data = clusts_plus_one_plot)
 summary(mod.mf6)
@@ -878,6 +916,31 @@ lines(smooth.spline(fitted(mod.mf10),mf.res10));
 
 summary(glht(mod.mf10, linfct=mcp(int ="Tukey")))
 ```
+
+# over 10
+```{r}
+clusts_plus_one_plot$sqover10 <- (clusts_plus_one_plot$Xover10)^(1/2)
+
+mod.mf15 <- lmer(sqover10 ~ int + (1 | Plate), data = clusts_plus_one_plot)
+summary(mod.mf10)
+
+#assess normality
+mf.res10 = residuals(mod.mf10)
+summary(mf.res10)
+qqPlot(mf.res10)
+hist(mf.res10)
+boxplot(mf.res10)
+shapiro.test(mf.res10)
+
+#assess homoscedasticity
+plot(fitted(mod.mf10),mf.res10);
+abline(h=0,lty=2);
+lines(smooth.spline(fitted(mod.mf10),mf.res10));
+
+summary(glht(mod.mf10, linfct=mcp(int ="Tukey")))
+```
+
+
 
 # over 15
 ```{r}
@@ -925,9 +988,73 @@ lines(smooth.spline(fitted(mod.mf50),mf.res50));
 summary(glht(mod.mf50, linfct=mcp(int ="Tukey")))
 ```
 
-# Plots
 
-# Figure 3A
+
+# Data Visualization
+
+# Fig 3A: plot cells over time
+```{r}
+
+plot_cells_line <- ggplot(clusts_plus_one_plot,aes(x=day,y=clustersize,color=Treatmentfactor, shape = Treatmentfactor, linetype = Treatmentfactor)) + stat_summary(fun.data=mean_se,position=position_dodge(0.5),geom="errorbar") +
+    stat_summary(fun=mean,position=position_dodge(width=0.5),geom="line", alpha = 0.5) + stat_summary(fun=mean,position=position_dodge(width=0.5),geom="point") +
+  theme_linedraw() +
+  xlab("") + ylab("Total # of cells \n per image-stack") +
+  scale_shape_manual(values = c(16,17), name = "Treatment", labels = c("26-26","26-32")) +
+  scale_color_manual(values = c("black","grey40"), name = "Treatment", labels = c("26-26","26-32")) +
+  scale_fill_manual(values = c("black","grey40"), name = "Treatment", labels = c("26-26","26-32")) +
+  scale_linetype_manual(values = c("solid","dashed"), name = "Treatment", labels = c("26-26","26-32")) + scale_x_continuous(limits=c(0,21), breaks = c(0,2,6,9,13,16,20)) +
+  geom_vline(xintercept=c(7), linetype="dotted") +
+  annotate("text", x = c(0), y = c(1200), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(0), y = c(50), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(7.5), y = c(1200), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(7.5), y = c(50), label='underline("32˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(9), y = c(559), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(13), y = c(200), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(16), y = c(110), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(20), y = c(50), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  coord_cartesian(ylim = c(-10,1300))
+             
+plot_cells_line
+```
+
+# Fig 3B: plot clusters over time
+```{r}
+
+plot_clusters_line <- ggplot(clusts_plus_one_plot,aes(x=day,y=numberofclusters.1,color=Treatmentfactor, shape = Treatmentfactor, linetype = Treatmentfactor)) + stat_summary(fun.data=mean_se,position=position_dodge(0.5),geom="errorbar") +
+    stat_summary(fun=mean,position=position_dodge(width=0.5),geom="line", alpha = 0.5) + stat_summary(fun=mean,position=position_dodge(width=0.5),geom="point") +
+  theme_linedraw() +
+  xlab("Days post inoculation") + ylab("Total # of clusters \n per image-stack") +
+  scale_shape_manual(values = c(16,17), name = "Treatment", labels = c("26-26","26-32")) +
+  scale_color_manual(values = c("black","grey40"), name = "Treatment", labels = c("26-26","26-32")) +
+  scale_fill_manual(values = c("black","grey40"), name = "Treatment", labels = c("26-26","26-32")) +
+  scale_linetype_manual(values = c("solid","dashed"), name = "Treatment", labels = c("26-26","26-32")) + scale_x_continuous(limits=c(0,21), breaks = c(0,2,6,9,13,16,20)) +
+  geom_vline(xintercept=c(7), linetype="dotted") +
+  annotate("text", x = c(0), y = c(300), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(0), y = c(25), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(7.5), y = c(300), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(7.5), y = c(25), label='underline("32˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(9), y = c(195), label='"NS"', parse = T, hjust=0.5, vjust=0,size=2.5) +
+  annotate("text", x = c(13), y = c(40), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(16), y = c(40), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(20), y = c(15), label='bold("*")', parse = T, hjust=0, vjust=0) +
+  coord_cartesian(ylim = c(-10,325))
+             
+plot_clusters_line
+```
+
+```{r}
+plot_cells_clusters <- 
+ggarrange(plot_cells_line,
+          plot_clusters_line,
+          labels = c("A","B"),
+          nrow = 2, ncol = 1, common.legend = T, legend = "bottom")
+plot_cells_clusters
+
+```
+
+
+
+# Figure 3C
 
 ```{r}
 total_mf_plot_26_32 <- ggplot(clusts_32_one,aes(x=day,y=-frequency,fill=cluster_type)) + 
@@ -938,145 +1065,44 @@ total_mf_plot_26_32 <- ggplot(clusts_32_one,aes(x=day,y=-frequency,fill=cluster_
     stat_summary(data = clusts_26_one, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=2.5),geom="bar", color = "black", width = 2) +
   theme_linedraw() + 
 scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
-                       "#F0E442", "#0072B2", "#D55E00", "#CC79A7","purple"), name = "Cluster size (cells)", labels = c("1","2","3","4","5","6-9","10-15","over 15","over 50")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,21.9), breaks = c(0,2,6,9,13,16,20), minor_breaks = seq(0,21,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(0.5,20.5),ylim =c(-80,80)) + 
+                       "#F0E442", "#0072B2", "#D55E00", "#CC79A7","purple"), name = "Cluster size (cells)", labels = c("1","2","3-4","5-10","over 10","","","","")) + ylab("Mean # of clusters per image-stack") + scale_x_continuous(limits = c(0,21.9), breaks = c(0,2,6,9,13,16,20), minor_breaks = seq(0,21,1)) + xlab("Days post inoculation") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(0.5,20.5),ylim =c(-90,90)) + 
   scale_y_continuous(breaks=seq(-100,100,by=10),labels=abs(seq(-100,100,by=10))) +
   annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) + 
       geom_vline(xintercept=c(7.5), linetype="dotted") +
-  annotate("text", x = c(0), y = c(70), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(0), y = c(-70), label='underline("32˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(0), y = c(90), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(0), y = c(-95), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+    annotate("text", x = c(8), y = c(90), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(8), y = c(-95), label='underline("32˚C")', parse = T, hjust=0, vjust=0) +
   geom_hline(yintercept=c(0)) +
-  annotate("text", x = c(17), y = c(-70), label="B. minutum", hjust=0, vjust=0, fontface = "italic") +
+  annotate("text", x = c(17), y = c(-95), label="B. minutum", hjust=0, vjust=0, fontface = "italic") +
   geom_signif(y_position = c(-83,-66), 
-              xmin = c(8,8.32),
-              xmax = c(8,8.32), size = 0, textsize = 2.5,
+              xmin = c(8,8.6),
+              xmax = c(8,8.6), size = 0, textsize = 2.5,
               annotation = c("NS"), tip_length = 0,color = "black") +
-    geom_signif(y_position = c(53,75,70,68), 
-              xmin = c(8.5,11.8,14.8,18.8),
+    geom_signif(y_position = c(-40,-20,-20,-10), 
+              xmin = c(8.9,11.8,14.8,18.8),
               xmax = c(10.2,14.2,17.2,21.2), size = 0.5,
-              annotation = c("***"), tip_length = 0.005,color = "black")
+              annotation = c(""), tip_length = -0.005,color = "black") +
+  annotate("text", x = c(9.6), y = c(-52), label='bold("*")', parse = T, hjust=0.5, vjust=0) +
+  annotate("text", x = c(13), y = c(-32), label='bold("*")', parse = T, hjust=0.5, vjust=0) +
+  annotate("text", x = c(16), y = c(-32), label='bold("*")', parse = T, hjust=0.5, vjust=0) +
+  annotate("text", x = c(20), y = c(-22), label='bold("*")', parse = T, hjust=0.5, vjust=0) 
 
 total_mf_plot_26_32
 ```
-# Figure 3B
 
-
+# Figure 3 final
 ```{r}
-
-df_mf_cluster_errors_26 <- subset(clusts_plus_long_one, Treatment == "26")
-df_mf_cluster_errors_26 <- subset(df_mf_cluster_errors_26, cluster_type %in% c("hist_count"))
-
-df_mf_cluster_errors_32 <- subset(clusts_plus_long_one, Treatment == "32")
-df_mf_cluster_errors_32 <- subset(df_mf_cluster_errors_32, cluster_type %in% c("hist_count"))
-df_mf_cluster_errors_32 <- subset(df_mf_cluster_errors_32, cluster_type %in% c("hist_count"))
-
-df_mf_cluster_errors_26$cluster_type <- gsub("hist_count","Xone",df_mf_cluster_errors_26$cluster_type)
-df_mf_cluster_errors_32$cluster_type <- gsub("hist_count","Xone",df_mf_cluster_errors_32$cluster_type)
-
-```
+plot_cells_clusters_individuals <- 
+ggarrange(plot_cells_clusters,
+          total_mf_plot_26_32,
+          labels = c("","C"),
+          nrow = 1, ncol = 2, common.legend = F,
+          widths = c(1, 2))
+plot_cells_clusters_individuals
+ggsave("plot_cells_clusters_individuals.png", height = 5, width = 8)
 
 
-```{r}
-
-total_mf_plot_26_32_stack <- ggplot(clusts_32_one,aes(x=day,y=-frequency,fill=cluster_type)) +
-    stat_summary(fun=mean,position="stack",geom="bar", color = "black", alpha = 0.5, width = 1.5) +
-    stat_summary(data = clusts_26_one, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position="stack",geom="bar", color = "black", width = 1.5) +
-  theme_linedraw() + 
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
-                       "#F0E442", "#0072B2", "#D55E00", "#CC79A7","purple"), name = "Cluster size (cells)", labels = c("1","2","3","4","5","6-9","10-15","over 15","over 50")) +
-  ylab("Total # of clusters \n per image-stack") +
-  scale_x_continuous(limits = c(0,21.9), breaks = c(0,2,6,9,13,16,20), minor_breaks = seq(0,21,1)) +
-  xlab("") +
-  scale_color_manual(values = c("black","purple")) +
-  theme(legend.position="bottom") +
-  guides(fill = guide_legend(nrow=1, byrow=TRUE)) +
-  coord_cartesian(ylim =c(-200,300)) + 
-  scale_y_continuous(breaks=seq(-800,800,by=100),labels=abs(seq(-800,800,by=100))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") +
-  scale_alpha(guide=FALSE) +
-  scale_color_manual(values = c("black","purple"), guide=FALSE) + 
-      geom_vline(xintercept=c(7), linetype="dotted") +
-  annotate("text", x = c(0), y = c(280), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(0), y = c(-200), label='underline("32˚C")', parse = T, hjust=0, vjust=0) +
-  geom_hline(yintercept=c(0)) +
-  annotate("text", x = c(19), y = c(-200), label="B. minutum", hjust=0, vjust=0, fontface = "italic")
-
-
-total_mf_plot_26_32_stack
-```
-
-```{r}
-mf_stackclust_plot <-
-total_mf_plot_26_32_stack + 
-  stat_summary(data = df_mf_cluster_errors_32, inherit.aes = FALSE, mapping = aes(x=day,y=-frequency,fill = cluster_type), fun.data=mean_se, position= "identity", geom="errorbar", color = "black", width=1) +
-  stat_summary(data = df_mf_cluster_errors_26, inherit.aes = FALSE, mapping = aes(x=day,y=frequency,fill = cluster_type), fun.data=mean_se,position= "identity",geom="errorbar",color = "black", width=1) +
-    annotate("text", x = c(13), y = c(285), label="***") +
-    annotate("text", x = c(16), y = c(260), label="***") +
-    annotate("text", x = c(20), y = c(280), label="***") 
-
-
-mf_stackclust_plot
-```
-
-# Figure 3C
-
-
-```{r}
-
-df_mf_cell_errors_26 <- subset(clusts_plus_long_one, Treatment == "26")
-df_mf_cell_errors_26 <- subset(df_mf_cell_errors_26, cluster_type %in% c("hist_sum"))
-
-df_mf_cell_errors_32 <- subset(clusts_plus_long_one, Treatment == "32")
-df_mf_cell_errors_32 <- subset(df_mf_cell_errors_32, cluster_type %in% c("hist_sum"))
-
-df_mf_cell_errors_26$cluster_type <- gsub("hist_sum","hist_sum_one",df_mf_cell_errors_26$cluster_type)
-df_mf_cell_errors_32$cluster_type <- gsub("hist_sum","hist_sum_one",df_mf_cell_errors_32$cluster_type)
 
 ```
-
-```{r}
-
-total_mf_plot_26_32_stackhist15 <- ggplot(clusts_32_hist,aes(x=day,y=-frequency,fill=cluster_type)) + 
-     stat_summary(fun=mean,position="stack",geom="bar", color = "black", alpha = 0.5, width = 1.5) +
-    stat_summary(data = clusts_26_hist, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position="stack",geom="bar", color = "black", width = 1.5) +
-  theme_linedraw() + 
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
-                       "#F0E442", "#0072B2", "#D55E00", "#CC79A7","purple"), name = "Cluster size (cells)", labels = c("1","2","3","4","5","6-9","10-15","over 15","over 50")) + ylab("Total # of cells \n per image-stack") + scale_x_continuous(limits = c(0,21.9), breaks = c(0,2,6,9,13,16,20), minor_breaks = seq(0,21,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(ylim =c(-1500,2500)) + 
-  scale_y_continuous(breaks=seq(-8000,8000,by=1000),labels=abs(seq(-8000,8000,by=1000))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) + 
-      geom_vline(xintercept=c(7), linetype="dotted") +
-  annotate("text", x = c(0), y = c(2300), label='underline("26˚C")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(0), y = c(-1400), label='underline("32˚C")', parse = T, hjust=0, vjust=0) +
-  geom_hline(yintercept=c(0)) +
-  annotate("text", x = c(21), y = c(-1400), label="B. minutum", hjust=1, vjust=0, fontface = "italic")
-
-
-total_mf_plot_26_32_stackhist15
-```
-
-```{r}
-mf_stackhist_plot <- total_mf_plot_26_32_stackhist15 + 
-  stat_summary(data = df_mf_cell_errors_32, inherit.aes = FALSE, mapping = aes(x=day,y=-frequency,fill = cluster_type), fun.data=mean_se, position= "identity", geom="errorbar", color = "black", width=1) +
-
- 
-  stat_summary(data = df_mf_cell_errors_26, inherit.aes = FALSE, mapping = aes(x=day,y=frequency,fill = cluster_type), fun.data=mean_se,position= "identity",geom="errorbar",color = "black", width=1) +
-    annotate("text", x = c(9), y = c(1950), label="***") +
-    annotate("text", x = c(13), y = c(2300), label="***") +
-    annotate("text", x = c(16), y = c(2250), label="***") +
-    annotate("text", x = c(20), y = c(2500), label="***") 
-mf_stackhist_plot
-```
-
-# Final Figure 3
-
-```{r} 
-plot_mf_hists <-
-ggarrange(total_mf_plot_26_32,
-          mf_stackclust_plot,
-          mf_stackhist_plot, labels = c("A","B","C"),
-          nrow = 3, ncol = 1, common.legend = T, legend = "bottom")
-plot_mf_hists
-ggsave("plot_mf_hists.png", height = 10, width = 6)
-```
-
