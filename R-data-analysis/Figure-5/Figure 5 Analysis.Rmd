@@ -1,0 +1,4127 @@
+---
+title: "Figure 5 Analysis"
+author: "Trevor Tivey"
+date: "1/11/2022"
+output: html_document
+---
+
+
+
+# set up
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(data.table)
+
+```
+
+
+## summarize obj_count_combined to get total cluster number, total cluster volume, total cluster size, by name
+```{r}
+setwd("./summarycsv/")
+
+### link both csvs
+
+clusts_bleach <- read.csv("finalcluster2020.csv", header = T)
+# grouping cluster groups
+
+clusts_plus_bleach <- clusts_bleach
+
+
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xone = dplyr::select(., X0.001:X0.4001) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xtwo = dplyr::select(., X0.5001:X1.001) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xthree = dplyr::select(., X1.251:X1.801) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xfour = dplyr::select(., X2.001:X2.801) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xthreefour = dplyr::select(., X1.251:X2.801) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xfive = dplyr::select(., X3.001:X3.301) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X6to9 = dplyr::select(., X3.501:X5.001) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X5to10 = dplyr::select(., X3.001:X5.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xover10 = dplyr::select(., X6.001:X999.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X10to15 = dplyr::select(., X5.501:X8.001) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xover15 = dplyr::select(., X8.501:X999.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X15to50 = dplyr::select(., X8.501:X25.001) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(Xover50 = dplyr::select(., X25.501:X999.501) %>% rowSums(na.rm = TRUE))
+```
+
+
+# Counting total clusters
+```{r}
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_50_100 = dplyr::select(., X25.501:X50.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_100_200 = dplyr::select(., X51.001:X100.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_200_300 = dplyr::select(., X101.001:X150.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_300_400 = dplyr::select(., X151.001:X200.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_400_500 = dplyr::select(., X201.001:X250.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_500_600 = dplyr::select(., X251.001:X300.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_600_700 = dplyr::select(., X301.001:X350.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_700_800 = dplyr::select(., X351.001:X400.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_800_900 = dplyr::select(., X401.001:X450.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_900_1000 = dplyr::select(., X451.001:X500.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1000_1100 = dplyr::select(., X501.001:X550.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1100_1200 = dplyr::select(., X551.001:X600.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1200_1300 = dplyr::select(., X601.001:X650.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1300_1400 = dplyr::select(., X651.001:X700.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1400_1500 = dplyr::select(., X701.001:X750.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1500_1600 = dplyr::select(., X751.001:X800.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1600_1700 = dplyr::select(., X801.001:X850.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1700_1800 = dplyr::select(., X851.001:X900.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1800_1900 = dplyr::select(., X901.001:X950.501) %>% rowSums(na.rm = TRUE))
+clusts_plus_bleach <- clusts_plus_bleach %>%
+    mutate(X_1900_2000 = dplyr::select(., X951.001:X999.501) %>% rowSums(na.rm = TRUE))
+```
+
+
+# Counting total cells
+```{r}
+clusts_plus_bleach$hist_sum_one <- clusts_plus_bleach$Xone
+clusts_plus_bleach$hist_sum_two <- 2*clusts_plus_bleach$Xtwo
+clusts_plus_bleach$hist_sum_three <- 3*clusts_plus_bleach$Xthree
+clusts_plus_bleach$hist_sum_four <- 4*clusts_plus_bleach$Xfour
+clusts_plus_bleach$hist_sum_five <- 5*clusts_plus_bleach$Xfive
+clusts_plus_bleach$hist_sum_6to9 <- 6*clusts_plus_bleach$X3.501 +
+  7*clusts_plus_bleach$X4.001 +
+  8*clusts_plus_bleach$X4.501 +
+  9*clusts_plus_bleach$X5.001
+clusts_plus_bleach$hist_sum_10to15 <- 10*clusts_plus_bleach$X5.501 +
+  11*clusts_plus_bleach$X6.001 +
+  12*clusts_plus_bleach$X6.501 +
+  13*clusts_plus_bleach$X7.001 +
+  14*clusts_plus_bleach$X7.501 +
+  15*clusts_plus_bleach$X8.001
+clusts_plus_bleach$hist_sum_over15 <- 16*clusts_plus_bleach$X8.501 +
+  17*clusts_plus_bleach$X9.001 +
+  18*clusts_plus_bleach$X9.501 +
+  19*clusts_plus_bleach$X10.001 +
+  20*clusts_plus_bleach$X10.501 +
+  21*clusts_plus_bleach$X11.001 +
+  22*clusts_plus_bleach$X11.501 +
+  23*clusts_plus_bleach$X12.001 +
+  24*clusts_plus_bleach$X12.501 +
+  25*clusts_plus_bleach$X13.001 +
+  26*clusts_plus_bleach$X13.501 +
+  27*clusts_plus_bleach$X14.001 +
+  28*clusts_plus_bleach$X14.501 +
+  29*clusts_plus_bleach$X15.001 +
+  30*clusts_plus_bleach$X15.501 +
+  31*clusts_plus_bleach$X16.001 +
+  32*clusts_plus_bleach$X16.501 +
+  33*clusts_plus_bleach$X17.001 +
+  34*clusts_plus_bleach$X17.501 +
+  35*clusts_plus_bleach$X18.001 +
+  36*clusts_plus_bleach$X18.501 +
+  37*clusts_plus_bleach$X19.001 +
+  38*clusts_plus_bleach$X19.501 +
+  39*clusts_plus_bleach$X20.001 +
+  40*clusts_plus_bleach$X20.501 +
+  41*clusts_plus_bleach$X21.001 +
+  42*clusts_plus_bleach$X21.501 +
+  43*clusts_plus_bleach$X22.001 +
+  44*clusts_plus_bleach$X22.501 +
+  45*clusts_plus_bleach$X23.001 +
+  46*clusts_plus_bleach$X23.501 +
+  47*clusts_plus_bleach$X24.001 +
+  48*clusts_plus_bleach$X24.501 +
+  49*clusts_plus_bleach$X25.001 +
+  75*clusts_plus_bleach$X_50_100 +
+  150*clusts_plus_bleach$X_100_200 +
+  250*clusts_plus_bleach$X_200_300 +
+  350*clusts_plus_bleach$X_300_400 +
+  450*clusts_plus_bleach$X_400_500 +
+  550*clusts_plus_bleach$X_500_600 +
+  650*clusts_plus_bleach$X_600_700 +
+  750*clusts_plus_bleach$X_700_800 +
+  850*clusts_plus_bleach$X_800_900 +
+  950*clusts_plus_bleach$X_900_1000 +
+  1050*clusts_plus_bleach$X_1000_1100 +
+  1150*clusts_plus_bleach$X_1100_1200 +
+  1250*clusts_plus_bleach$X_1200_1300 +
+  1350*clusts_plus_bleach$X_1300_1400 +
+  1450*clusts_plus_bleach$X_1400_1500 +
+  1550*clusts_plus_bleach$X_1500_1600 +
+  1650*clusts_plus_bleach$X_1600_1700 +
+  1750*clusts_plus_bleach$X_1700_1800 +
+  1850*clusts_plus_bleach$X_1800_1900 +
+  1950*clusts_plus_bleach$X_1900_2000
+
+
+
+clusts_plus_bleach$hist_sum <- 
+  clusts_plus_bleach$Xone + 
+  2*clusts_plus_bleach$Xtwo +
+  3*clusts_plus_bleach$Xthree + 
+  4*clusts_plus_bleach$Xfour +
+  5*clusts_plus_bleach$Xfive +
+  6*clusts_plus_bleach$X3.501 +
+  7*clusts_plus_bleach$X4.001 +
+  8*clusts_plus_bleach$X4.501 +
+  9*clusts_plus_bleach$X5.001 +
+  10*clusts_plus_bleach$X5.501 +
+  11*clusts_plus_bleach$X6.001 +
+  12*clusts_plus_bleach$X6.501 +
+  13*clusts_plus_bleach$X7.001 +
+  14*clusts_plus_bleach$X7.501 +
+  15*clusts_plus_bleach$X8.001 +
+  16*clusts_plus_bleach$X8.501 +
+  17*clusts_plus_bleach$X9.001 +
+  18*clusts_plus_bleach$X9.501 +
+  19*clusts_plus_bleach$X10.001 +
+  20*clusts_plus_bleach$X10.501 +
+  21*clusts_plus_bleach$X11.001 +
+  22*clusts_plus_bleach$X11.501 +
+  23*clusts_plus_bleach$X12.001 +
+  24*clusts_plus_bleach$X12.501 +
+  25*clusts_plus_bleach$X13.001 +
+  26*clusts_plus_bleach$X13.501 +
+  27*clusts_plus_bleach$X14.001 +
+  28*clusts_plus_bleach$X14.501 +
+  29*clusts_plus_bleach$X15.001 +
+  30*clusts_plus_bleach$X15.501 +
+  31*clusts_plus_bleach$X16.001 +
+  32*clusts_plus_bleach$X16.501 +
+  33*clusts_plus_bleach$X17.001 +
+  34*clusts_plus_bleach$X17.501 +
+  35*clusts_plus_bleach$X18.001 +
+  36*clusts_plus_bleach$X18.501 +
+  37*clusts_plus_bleach$X19.001 +
+  38*clusts_plus_bleach$X19.501 +
+  39*clusts_plus_bleach$X20.001 +
+  40*clusts_plus_bleach$X20.501 +
+  41*clusts_plus_bleach$X21.001 +
+  42*clusts_plus_bleach$X21.501 +
+  43*clusts_plus_bleach$X22.001 +
+  44*clusts_plus_bleach$X22.501 +
+  45*clusts_plus_bleach$X23.001 +
+  46*clusts_plus_bleach$X23.501 +
+  47*clusts_plus_bleach$X24.001 +
+  48*clusts_plus_bleach$X24.501 +
+  49*clusts_plus_bleach$X25.001 +
+  75*clusts_plus_bleach$X_50_100 +
+  150*clusts_plus_bleach$X_100_200 +
+  250*clusts_plus_bleach$X_200_300 +
+  350*clusts_plus_bleach$X_300_400 +
+  450*clusts_plus_bleach$X_400_500 +
+  550*clusts_plus_bleach$X_500_600 +
+  650*clusts_plus_bleach$X_600_700 +
+  750*clusts_plus_bleach$X_700_800 +
+  850*clusts_plus_bleach$X_800_900 +
+  950*clusts_plus_bleach$X_900_1000 +
+  1050*clusts_plus_bleach$X_1000_1100 +
+  1150*clusts_plus_bleach$X_1100_1200 +
+  1250*clusts_plus_bleach$X_1200_1300 +
+  1350*clusts_plus_bleach$X_1300_1400 +
+  1450*clusts_plus_bleach$X_1400_1500 +
+  1550*clusts_plus_bleach$X_1500_1600 +
+  1650*clusts_plus_bleach$X_1600_1700 +
+  1750*clusts_plus_bleach$X_1700_1800 +
+  1850*clusts_plus_bleach$X_1800_1900 +
+  1950*clusts_plus_bleach$X_1900_2000
+
+```
+
+# Total cluster count
+```{r}
+clusts_plus_bleach$hist_count <- 
+  clusts_plus_bleach$Xone + 
+  clusts_plus_bleach$Xtwo +
+  clusts_plus_bleach$Xthree + 
+  clusts_plus_bleach$Xfour +
+  clusts_plus_bleach$Xfive +
+  clusts_plus_bleach$X3.501 +
+  clusts_plus_bleach$X4.001 +
+  clusts_plus_bleach$X4.501 +
+  clusts_plus_bleach$X5.001 +
+  clusts_plus_bleach$X5.501 +
+  clusts_plus_bleach$X6.001 +
+  clusts_plus_bleach$X6.501 +
+  clusts_plus_bleach$X7.001 +
+  clusts_plus_bleach$X7.501 +
+  clusts_plus_bleach$X8.001 +
+  clusts_plus_bleach$X8.501 +
+  clusts_plus_bleach$X9.001 +
+  clusts_plus_bleach$X9.501 +
+  clusts_plus_bleach$X10.001 +
+  clusts_plus_bleach$X10.501 +
+  clusts_plus_bleach$X11.001 +
+  clusts_plus_bleach$X11.501 +
+  clusts_plus_bleach$X12.001 +
+  clusts_plus_bleach$X12.501 +
+  clusts_plus_bleach$X13.001 +
+  clusts_plus_bleach$X13.501 +
+  clusts_plus_bleach$X14.001 +
+  clusts_plus_bleach$X14.501 +
+  clusts_plus_bleach$X15.001 +
+  clusts_plus_bleach$X15.501 +
+  clusts_plus_bleach$X16.001 +
+  clusts_plus_bleach$X16.501 +
+  clusts_plus_bleach$X17.001 +
+  clusts_plus_bleach$X17.501 +
+  clusts_plus_bleach$X18.001 +
+  clusts_plus_bleach$X18.501 +
+  clusts_plus_bleach$X19.001 +
+  clusts_plus_bleach$X19.501 +
+  clusts_plus_bleach$X20.001 +
+  clusts_plus_bleach$X20.501 +
+  clusts_plus_bleach$X21.001 +
+  clusts_plus_bleach$X21.501 +
+  clusts_plus_bleach$X22.001 +
+  clusts_plus_bleach$X22.501 +
+  clusts_plus_bleach$X23.001 +
+  clusts_plus_bleach$X23.501 +
+  clusts_plus_bleach$X24.001 +
+  clusts_plus_bleach$X24.501 +
+  clusts_plus_bleach$X25.001 +
+  clusts_plus_bleach$X_50_100 +
+  clusts_plus_bleach$X_100_200 +
+  clusts_plus_bleach$X_200_300 +
+  clusts_plus_bleach$X_300_400 +
+  clusts_plus_bleach$X_400_500 +
+  clusts_plus_bleach$X_500_600 +
+  clusts_plus_bleach$X_600_700 +
+  clusts_plus_bleach$X_700_800 +
+  clusts_plus_bleach$X_800_900 +
+  clusts_plus_bleach$X_900_1000 +
+  clusts_plus_bleach$X_1000_1100 +
+  clusts_plus_bleach$X_1100_1200 +
+  clusts_plus_bleach$X_1200_1300 +
+  clusts_plus_bleach$X_1300_1400 +
+  clusts_plus_bleach$X_1400_1500 +
+  clusts_plus_bleach$X_1500_1600 +
+  clusts_plus_bleach$X_1600_1700 +
+  clusts_plus_bleach$X_1700_1800 +
+  clusts_plus_bleach$X_1800_1900 +
+  clusts_plus_bleach$X_1900_2000
+```
+
+# Subset dataset
+```{r}
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9785)
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9793)
+
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9879)
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9905)
+
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9562)
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9987)
+clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 7705)
+```
+
+
+
+# melt data set to long form
+```{r}
+
+clusts_plus_long_bleach <- reshape2::melt(clusts_plus_bleach,
+        # ID variables - all the variables to keep but not split apart on
+    id.vars=c(1:18),
+        # The source columns
+        # Name of the destination column that will identify the original
+        # column that the measurement came from
+    variable.name="cluster_type",
+    value.name="frequency"
+)
+
+```
+
+
+# Subset into species and temperature specific datasets
+```{r}
+clusts_26A <- subset(clusts_plus_long_bleach, treatment == "A26")
+clusts_26A <- subset(clusts_26A, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+clusts_26B <- subset(clusts_plus_long_bleach, treatment == "B26")
+clusts_26B <- subset(clusts_26B, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+clusts_26C <- subset(clusts_plus_long_bleach, treatment == "C26")
+clusts_26C <- subset(clusts_26C, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+clusts_32A <- subset(clusts_plus_long_bleach, treatment == "A32")
+clusts_32A <- subset(clusts_32A, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+clusts_32B <- subset(clusts_plus_long_bleach, treatment == "B32")
+clusts_32B <- subset(clusts_32B, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+clusts_32C <- subset(clusts_plus_long_bleach, treatment == "C32")
+clusts_32C <- subset(clusts_32C, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+```
+
+# Filtering inaccurate 3d counts
+```{r}
+clusts_32A <- subset(clusts_32A, sample != 9785)
+clusts_32A <- subset(clusts_32A, sample != 9793)
+
+clusts_32B <- subset(clusts_32B, sample != 9879)
+clusts_32B <- subset(clusts_32B, sample != 9905)
+
+clusts_26A <- subset(clusts_26A, sample != 9562)
+clusts_26A <- subset(clusts_26A, sample != 9987)
+clusts_26A <- subset(clusts_26A, sample != 7705)
+clusts_26A <- subset(clusts_26A, sample != 8784)
+
+#ggplot(data = clusts_26A, x = day, y = frequency, group = cluster_type) + #stat_summary()
+```
+
+
+# Subset datasets to common time measurements only
+```{r}
+
+#(plots only bleach and nonbleach comparisons)
+clusts_32A <- subset(clusts_32A, day %in% c(4,7,9,11,14,16,18,21,25,31))
+clusts_32B <- subset(clusts_32B, day %in% c(4,7,9,11,14,16,18,21,25,31))
+clusts_32C <- subset(clusts_32C, day %in% c(4,7,9,11,14,16,18,21,25,31))
+
+clusts_26A <- subset(clusts_26A, day %in% c(4,7,9,11,14,16,18,21,25,31))
+clusts_26B <- subset(clusts_26B, day %in% c(4,7,9,11,14,16,18,21,25,31))
+clusts_26C <- subset(clusts_26C, day %in% c(4,7,9,11,14,16,18,21,25,31))
+
+```
+
+
+
+
+# Figure 5A
+
+```{r}
+
+clusts_plus_bleach_limited <- subset(clusts_plus_bleach, day < 33)
+clusts_plus_bleach_limited <- subset(clusts_plus_bleach_limited, day > 2)
+
+```
+
+
+# Linear model: growth rate variation differences between anemones in A and D treatments but not B
+```{r}
+
+lmBmin <- lm(data = subset(clusts_plus_bleach_limited, treatment == "B26"), hist_sum ~ day)
+summary(lmBmin) 
+confint(lmBmin)
+
+# R^2 of 0.5
+
+
+lmSmic <- lm(data = subset(clusts_plus_bleach_limited, treatment == "A26"), hist_sum ~ day)
+summary(lmSmic) 
+confint(lmSmic)
+
+# R^2 of 0.07
+
+lmDtre <- lm(data = subset(clusts_plus_bleach_limited, treatment == "C26"), hist_sum ~ day)
+summary(lmDtre) 
+confint(lmDtre)
+
+#R^2 of 0.16
+
+```
+
+# Linear model
+```{r}
+
+lmBmin_add <- lm(data = subset(clusts_plus_bleach_limited, treatment == "B26"), hist_sum ~ day + anemone)
+summary(lmBmin_add) 
+confint(lmBmin_add)
+
+# R^2 of 0.54
+
+
+lmSmic_add <- lm(data = subset(clusts_plus_bleach_limited, treatment == "A26"), hist_sum ~ day + anemone)
+summary(lmSmic_add) 
+confint(lmSmic_add)
+
+# R^2 of 0.64
+
+lmDtre_add <- lm(data = subset(clusts_plus_bleach_limited, treatment == "C26"), hist_sum ~ day + anemone)
+summary(lmDtre_add) 
+confint(lmDtre_add)
+
+#R^2 of 0.48
+
+```
+
+```{r}
+
+lmBmin_full <- lm(data = subset(clusts_plus_bleach_limited, treatment == "B26"), hist_sum ~ day * anemone)
+summary(lmBmin_full) 
+confint(lmBmin_full)
+
+# R^2 of 0.56
+
+
+lmSmic_full <- lm(data = subset(clusts_plus_bleach_limited, treatment == "A26"), hist_sum ~ day * anemone)
+summary(lmSmic_full) 
+confint(lmSmic_full)
+
+# R^2 of 0.76
+
+lmDtre_full <- lm(data = subset(clusts_plus_bleach_limited, treatment == "C26"), hist_sum ~ day * anemone)
+summary(lmDtre_full) 
+confint(lmDtre_full)
+
+#R^2 of 0.65
+
+```
+# full models are statistically best fit
+```{r}
+anova(lmBmin_full,lmBmin_add)
+anova(lmBmin_add,lmBmin)
+
+anova(lmSmic_full,lmSmic_add)
+anova(lmSmic_add,lmSmic)
+
+anova(lmDtre_full,lmDtre_add)
+anova(lmDtre_add,lmDtre)
+```
+
+
+
+```{r}
+#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+glm.fit.clusts <- nls(hist_sum ~ SSlogis(log(day), Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "B26"))
+summary(glm.fit.clusts)
+
+#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+glm.fit.clusts2 <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "B26"))
+summary(glm.fit.clusts2)
+```
+
+```{r}
+#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+glm.fit.clusts <- nls(hist_sum ~ SSlogis(log(day), Asym, xmid, scal), subset(clusts_plus_bleach, treatment == "B26"))
+summary(glm.fit.clusts)
+
+#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+glm.fit.clusts2 <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), subset(clusts_plus_bleach, treatment == "B26"))
+summary(glm.fit.clusts2)
+```
+
+
+
+
+
+
+```{r}
+#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+glm.fit.clustsA <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "A26"))
+summary(glm.fit.clustsA)
+
+#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+glm.fit.clustsD <- nls(hist_sum ~ SSlogis(log(day), Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "C26"))
+summary(glm.fit.clustsD)
+```
+
+
+```{r}
+
+ggplot(subset(clusts_plus_bleach_limited, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_point() + 
+  geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "orange", linetype = "dotted", se = F, fullrange = TRUE) +
+
+  
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(log(x), Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 2750.5520, xmid = 3.6170, scal = 0.6951)), color = "blue", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,3000)) 
+
+
+ggplot(subset(clusts_plus_bleach, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_point() + 
+  geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "orange", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(log(x), Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 2750.5520, xmid = 3.6170, scal = 0.6951)), color = "blue", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,3000)) 
+```
+
+```{r}
+
+ggplot(subset(clusts_plus_bleach, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_point() + 
+  geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "orange", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(log(x), Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 2750.5520, xmid = 3.6170, scal = 0.6951)), color = "blue", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,100), ylim = c(0,3000)) +
+  facet_wrap(~ anemone)
+
+```
+
+
+```{r}
+fig5a_supp <- ggplot(subset(clusts_plus_bleach, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_boxplot(aes(group = day), fill = "peachpuff", color = "peachpuff4") +
+  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1249.146, xmid = 15.916, scal = 5.815)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,60), ylim = c(-100,3000)) +
+  theme_linedraw() +
+  ylab("Total sum of clusters\n per sample image") +
+  xlab("Days post inoculation") 
+fig5a_supp
+
+```
+
+
+```{r}
+fig5a <- ggplot(subset(clusts_plus_bleach_limited, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_boxplot(aes(group = day), fill = "peachpuff", color = "peachpuff4") +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1249.146, xmid = 15.916, scal = 5.815)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,35), ylim = c(-100,2500)) +
+  theme_linedraw() +
+  ylab("Total sum of cells\n per sample image") +
+  xlab("") 
+fig5a
+
+```
+
+
+#Figure 5A log(x)
+```{r}
+
+
+fig5a_log <- ggplot(subset(clusts_plus_bleach, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_boxplot(aes(group = day), fill = "peachpuff", color = "peachpuff4") +
+  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(log(x), Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1388, xmid = 2.793, scal = 0.4356)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,70), ylim = c(-100,3000)) +
+  theme_linedraw() +
+  ylab("Total sum of cells per image-stack") +
+  xlab("Days post inoculation")
+ 
+
+fig5a_log
+
+```
+
+
+
+
+```{r}
+fig5a_nolog_facet <- ggplot(subset(clusts_plus_bleach, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_boxplot(aes(group = day), fill = "peachpuff", color = "peachpuff4") +
+  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1249.146, xmid = 15.916, scal = 5.815)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,70), ylim = c(-100,3000)) +
+  theme_linedraw() +
+  ylab("Total sum of clusters\n per sample image") +
+  xlab("Days post inoculation") +
+  facet_wrap(~anemone)
+fig5a_nolog_facet
+
+```
+
+```{r}
+fig5a_nolog_facet <- ggplot(subset(clusts_plus_bleach_limited, treatment == "B26"),
+       aes(x=day, y=(hist_sum))) +
+  geom_boxplot(aes(group = day), fill = "peachpuff", color = "peachpuff4") +
+  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1249.146, xmid = 15.916, scal = 5.815)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,70), ylim = c(-100,3000)) +
+  theme_linedraw() +
+  ylab("Total sum of clusters\n per sample image") +
+  xlab("Days post inoculation") +
+  facet_wrap(~anemone)
+fig5a_nolog_facet
+
+```
+
+```{r}
+B01 <- subset(clusts_plus_bleach_limited, anemone == "B26.1")
+B02 <- subset(clusts_plus_bleach_limited, anemone == "B26.2")
+B03 <- subset(clusts_plus_bleach_limited, anemone == "B26.3")
+B04 <- subset(clusts_plus_bleach_limited, anemone == "B26.4")
+B05 <- subset(clusts_plus_bleach_limited, anemone == "B26.5")
+B06 <- subset(clusts_plus_bleach_limited, anemone == "B26.6")
+B07 <- subset(clusts_plus_bleach_limited, anemone == "B26.7")
+B08 <- subset(clusts_plus_bleach_limited, anemone == "B26.8")
+B09 <- subset(clusts_plus_bleach_limited, anemone == "B26.9")
+B10 <- subset(clusts_plus_bleach_limited, anemone == "B26.10")
+B11 <- subset(clusts_plus_bleach_limited, anemone == "B26.11")
+B12 <- subset(clusts_plus_bleach_limited, anemone == "B26.12")
+
+
+B01.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B01)
+B02.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B02)
+B03.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B03)
+B04.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B04)
+B05.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B05)
+B06.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B06)
+B07.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B07)
+B08.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B08)
+B09.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B09)
+B10.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B10)
+B11.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B11)
+B12.fit <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), B12)
+```
+
+```{r}
+summary(B01.fit)
+summary(B02.fit)
+summary(B03.fit)
+summary(B04.fit)
+summary(B05.fit)
+summary(B06.fit)
+summary(B07.fit)
+summary(B08.fit)
+summary(B09.fit)
+summary(B10.fit)
+summary(B11.fit)
+summary(B12.fit)
+
+```
+
+```{r}
+asymptoteB <- c(909.0273,1094.558,1539.66,1649.232,1156.496,718.131,4784.066,1082.182,1823.272,1028.765,1439.063,1504.436)
+
+midpointB <- c(13.3691,19.053,19.03,17.868,15.305,11.173,38.553,17.133,20.457,14.221,16.83,14.75)
+
+scaleB <- c(3.2372,3.419,11.45,7.682,4.494,4.064,12.132,3.591,6.603,7.089,9.348,4.604)
+
+Sample <- c("26B.1.4","26B.2.4","26B.3.4","26B.4.4","26B.5.4","26B.6.4","26B.7.4","26B.8.4","26B.9.4","26B.10.4","26B.11.4","26B.12.4")
+
+logisdfB <- data.frame(Sample,asymptoteB,midpointB,scaleB)
+```
+
+
+```{r data set, include=FALSE}
+# set up
+setwd("./summarycsv")
+
+popdata <- read.csv("Bmin_popmodel.csv", sep = ",", header = T)
+
+popdatajoin <- merge(x=popdata,y=logisdfB,by="Sample",all=TRUE)
+
+
+myvars <- c("Sample","Subsample", "initial.sample.day","clustersize","asymptoteB","midpointB","scaleB")
+
+# subset and rename data set for input
+cluster_init_data <- popdatajoin[myvars]
+
+cluster_init_data <- cluster_init_data %>% dplyr::rename(
+  sample = Sample,
+  subsample = Subsample,
+  day = initial.sample.day,
+  size = clustersize,
+  asymptote = asymptoteB,
+  midpoint = midpointB,
+  scale = scaleB
+)
+
+cluster_init_data$cells <- cut(cluster_init_data$size, breaks = c(0.001, 0.5, 1, 1.25, 2, 3, seq(3.501,1000.001,0.5)), labels = seq(1,1999,1), right = FALSE)
+
+cluster_init_data$cells <- as.numeric(cluster_init_data$cells)
+
+set.seed(34)
+cluster_init_data %>% 
+  group_by(sample) %>% sample_frac(0.33) -> cluster_sample_data_1
+
+set.seed(256)
+cluster_init_data %>% 
+  group_by(sample) %>% sample_frac(0.33) -> cluster_sample_data_2
+
+set.seed(88)
+cluster_init_data %>% 
+  group_by(sample) %>% sample_frac(0.33) -> cluster_sample_data_3
+```
+
+
+
+
+
+
+
+# Break initial day into new clusters for day 7 growth, apply growth rate to match observed linear model
+# Function
+
+```{r migrate cluster logistic function}
+##_______
+# Warning: returns "output.df" to Global Environment
+
+# inputs needed:
+# input data with a column for $sample and $size
+# migration rate i.e. probability of any cell to migrate
+# initial day
+# final day
+
+migrate.cluster.log <- function(input.df, migration.rate, initial.day, final.day, subsample) {
+
+# input.df needs to contain columns titled 'sample', 'size'
+  
+# set up empty data frames  
+df.final = data.frame()
+df.temp = data.frame()
+start.day <- initial.day
+end.day <- final.day
+migrate.rate <- migration.rate
+subsample <- subsample
+
+# for loop to calculate amount of migration from each cluster
+for(i in 1:nrow(input.df)) {
+  
+  # variable selection
+  sample.name <- input.df$sample[i]
+  start.cells <- input.df$cells[i]
+  asymp <- input.df$asymptote[i]
+  midp <- input.df$midpoint[i]
+  sca <- input.df$scale[i]
+  
+
+  # variable classification
+  sample.name <- as.character(sample.name)
+  start.cells <- as.numeric(start.cells)
+  start.day <- as.numeric(start.day)
+  end.day <- as.numeric(end.day)
+  asymp <- as.numeric(asymp)
+  midp <- as.numeric(midp)
+  sca <- as.numeric(sca)
+  
+  if(start.day  <  end.day) {
+    
+# apply migration probability
+# returns a binary vector of which cells have migrated
+
+bern.trial <- rbinom(start.cells,1,migrate.rate)
+
+# randomize singlet sizes within size distribution of singlets
+size.randomizer <- runif(start.cells,min=1, max=1.49)    
+
+# apply sizes to migrating cells
+migrate.vector <- bern.trial * size.randomizer
+
+# define new size of original cluster
+end.size.vector <- start.cells - sum(migrate.vector)
+
+
+# generate list of newly migrated clusters and original cluster
+
+if(end.size.vector > 0 && sum(migrate.vector) > 0){
+  migrate.vector.select <- migrate.vector[migrate.vector > 0.9]
+  new.cells <- c(migrate.vector.select, end.size.vector)
+  did.it.migrate <- "Yes"
+  # create temporary df for new sizes
+  df.temp <- data.frame(sample.name, start.day, end.day, new.cells, did.it.migrate, asymp, midp, sca)
+  # append temporary df to summary df containing clusters for entire sample
+  df.final <- bind_rows(df.final,df.temp)
+  
+} else{
+  # original cluster size continues to exist without migration event
+  new.cells <- c(start.cells)
+  did.it.migrate <- "No"
+  # create temporary df for original cluster
+  df.temp <- data.frame(sample.name, start.day, end.day, new.cells, did.it.migrate, asymp, midp, sca)
+  # append temporary df to summary df containing clusters for entire sample
+  df.final <- bind_rows(df.final,df.temp)
+} 
+
+} else{
+    # not enough time has passed, return the same list of objects as input
+    new.cells <- c(start.cells)
+    did.it.migrate <- "No"
+    # create temporary df for original cluster
+    df.temp <- data.frame(sample.name, start.day, end.day, new.cells, did.it.migrate, asymp, midp, sca)
+    # append temporary df to summary df containing clusters for entire sample
+    df.final <- bind_rows(df.final,df.temp)
+    }  
+  }
+
+# optional summary check to console before applying growth rate
+print("post-migration: input and output cell sum total should be equal")
+print(sum(input.df$cells))
+print(sum(df.final$new.cells))
+print("output cluster number should increase")
+print(nrow(input.df))
+print(nrow(df.final))
+
+
+# applying growth rate
+# lm general to all, not specific to each sample
+# take generated size distributions and add growth rate to form new clusters sizes
+#d7_final_lm <- df.final
+
+#write.csv(df.final, file = paste("migrate", migrate.rate, start.day, end.day, "postmigration.csv", sep = "-"))
+
+# add columns to df.final: total cluster number, 
+
+# hist sum and asym model are in total cells
+# newsizes are not cut yet
+
+output.df <- data.frame()
+
+if(start.day  <  end.day) {
+df.final %>% 
+  group_by(end.day, sample.name) %>% 
+  mutate(sample = sample.name,
+         start.sum = sum(new.cells),
+         model.start.sum = (asymp/(1+exp((midp - start.day)/sca))),
+         model.end.sum = (asymp/(1+exp((midp - end.day)/sca))),
+         pop.growth = model.end.sum - start.sum,
+         perc.clust = new.cells / start.sum,
+         cells = new.cells + (pop.growth)*perc.clust,
+         asymptote = asymp,
+         midpoint = midp,
+         scale = sca,
+         Subsample = subsample
+         ) -> output.df
+
+# SSlogis vector output = Asym/(1+exp((xmid-input)/scal))
+  #y ~ SSlogis(log(x), Asym, xmid, scal),
+#              se = FALSE,
+#              method.args = list(start = list(Asym = 2750.5520, xmid = # 3.6170, scal = 0.6951)
+write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
+
+} else{
+  df.final %>% 
+  group_by(end.day, sample.name) %>% 
+  mutate(sample = sample.name,
+         start.sum = sum(new.cells),
+         model.start.sum = (asymp/(1+exp((midp - start.day)/sca))),
+         model.end.sum = (asymp/(1+exp((midp - end.day)/sca))),
+         pop.growth = model.end.sum - start.sum,
+         perc.clust = new.cells / start.sum,
+         cells = new.cells + (pop.growth)*perc.clust,
+         asymptote = asymp,
+         midpoint = midp,
+         scale = sca,
+         Subsample = subsample
+         ) -> output.df
+  
+
+  
+  
+  
+# SSlogis vector output = Asym/(1+exp((xmid-input)/scal))
+  #y ~ SSlogis(log(x), Asym, xmid, scal),
+#              se = FALSE,
+#              method.args = list(start = list(Asym = 2750.5520, xmid = # 3.6170, scal = 0.6951)
+write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
+}
+
+print("post-growth: output cell sum total should increase")
+print(sum(df.final$new.cells))
+print(sum(output.df$cells))
+print("input and output cluster number should be equal")
+print(nrow(output.df))
+print(nrow(output.df))
+
+print("next day input file is output.df, which is saved as ... ")
+print(paste(migration.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
+
+# return output.df to Global environment for next input
+assign("output.df", output.df, envir=.GlobalEnv)
+return(output.df)
+
+}
+
+```
+
+
+
+```{r}
+setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
+migrate.cluster.log(cluster_init_data,0.01,4,4,1)
+migrate.cluster.log(output.df,0.01,4,5,1)
+```
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/logistic growth/mr0.1/")
+migrate.cluster.log(cluster_sample_data_1,0.1,4,4,1)
+migrate.cluster.log(output.df,0.1,4,5,1)
+migrate.cluster.log(output.df,0.1,5,6,1)
+migrate.cluster.log(output.df,0.1,6,7,1)
+migrate.cluster.log(output.df,0.1,7,8,1)
+migrate.cluster.log(output.df,0.1,8,9,1)
+migrate.cluster.log(output.df,0.1,9,10,1)
+migrate.cluster.log(output.df,0.1,10,11,1)
+migrate.cluster.log(output.df,0.1,11,12,1)
+migrate.cluster.log(output.df,0.1,12,13,1)
+migrate.cluster.log(output.df,0.1,13,14,1)
+migrate.cluster.log(output.df,0.1,14,15,1)
+migrate.cluster.log(output.df,0.1,15,16,1)
+migrate.cluster.log(output.df,0.1,16,17,1)
+migrate.cluster.log(output.df,0.1,17,18,1)
+migrate.cluster.log(output.df,0.1,18,19,1)
+migrate.cluster.log(output.df,0.1,19,20,1)
+migrate.cluster.log(output.df,0.1,20,21,1)
+migrate.cluster.log(output.df,0.1,21,22,1)
+migrate.cluster.log(output.df,0.1,22,23,1)
+migrate.cluster.log(output.df,0.1,23,24,1)
+migrate.cluster.log(output.df,0.1,24,25,1)
+migrate.cluster.log(output.df,0.1,25,26,1)
+migrate.cluster.log(output.df,0.1,26,27,1)
+migrate.cluster.log(output.df,0.1,27,28,1)
+migrate.cluster.log(output.df,0.1,28,29,1)
+migrate.cluster.log(output.df,0.1,29,30,1)
+migrate.cluster.log(output.df,0.1,30,31,1)
+migrate.cluster.log(output.df,0.1,31,32,1)
+migrate.cluster.log(output.df,0.1,32,33,1)
+
+```
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/logistic growth/mr0.1/")
+migrate.cluster.log(cluster_sample_data_2,0.1,4,4,2)
+migrate.cluster.log(output.df,0.1,4,5,2)
+migrate.cluster.log(output.df,0.1,5,6,2)
+migrate.cluster.log(output.df,0.1,6,7,2)
+migrate.cluster.log(output.df,0.1,7,8,2)
+migrate.cluster.log(output.df,0.1,8,9,2)
+migrate.cluster.log(output.df,0.1,9,10,2)
+migrate.cluster.log(output.df,0.1,10,11,2)
+migrate.cluster.log(output.df,0.1,11,12,2)
+migrate.cluster.log(output.df,0.1,12,13,2)
+migrate.cluster.log(output.df,0.1,13,14,2)
+migrate.cluster.log(output.df,0.1,14,15,2)
+migrate.cluster.log(output.df,0.1,15,16,2)
+migrate.cluster.log(output.df,0.1,16,17,2)
+migrate.cluster.log(output.df,0.1,17,18,2)
+migrate.cluster.log(output.df,0.1,18,19,2)
+migrate.cluster.log(output.df,0.1,19,20,2)
+migrate.cluster.log(output.df,0.1,20,21,2)
+migrate.cluster.log(output.df,0.1,21,22,2)
+migrate.cluster.log(output.df,0.1,22,23,2)
+migrate.cluster.log(output.df,0.1,23,24,2)
+migrate.cluster.log(output.df,0.1,24,25,2)
+migrate.cluster.log(output.df,0.1,25,26,2)
+migrate.cluster.log(output.df,0.1,26,27,2)
+migrate.cluster.log(output.df,0.1,27,28,2)
+migrate.cluster.log(output.df,0.1,28,29,2)
+migrate.cluster.log(output.df,0.1,29,30,2)
+migrate.cluster.log(output.df,0.1,30,31,2)
+migrate.cluster.log(output.df,0.1,31,32,2)
+migrate.cluster.log(output.df,0.1,32,33,2)
+
+```
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/logistic growth/mr0.1/")
+migrate.cluster.log(cluster_sample_data_3,0.1,4,4,3)
+migrate.cluster.log(output.df,0.1,4,5,3)
+migrate.cluster.log(output.df,0.1,5,6,3)
+migrate.cluster.log(output.df,0.1,6,7,3)
+migrate.cluster.log(output.df,0.1,7,8,3)
+migrate.cluster.log(output.df,0.1,8,9,3)
+migrate.cluster.log(output.df,0.1,9,10,3)
+migrate.cluster.log(output.df,0.1,10,11,3)
+migrate.cluster.log(output.df,0.1,11,12,3)
+migrate.cluster.log(output.df,0.1,12,13,3)
+migrate.cluster.log(output.df,0.1,13,14,3)
+migrate.cluster.log(output.df,0.1,14,15,3)
+migrate.cluster.log(output.df,0.1,15,16,3)
+migrate.cluster.log(output.df,0.1,16,17,3)
+migrate.cluster.log(output.df,0.1,17,18,3)
+migrate.cluster.log(output.df,0.1,18,19,3)
+migrate.cluster.log(output.df,0.1,19,20,3)
+migrate.cluster.log(output.df,0.1,20,21,3)
+migrate.cluster.log(output.df,0.1,21,22,3)
+migrate.cluster.log(output.df,0.1,22,23,3)
+migrate.cluster.log(output.df,0.1,23,24,3)
+migrate.cluster.log(output.df,0.1,24,25,3)
+migrate.cluster.log(output.df,0.1,25,26,3)
+migrate.cluster.log(output.df,0.1,26,27,3)
+migrate.cluster.log(output.df,0.1,27,28,3)
+migrate.cluster.log(output.df,0.1,28,29,3)
+migrate.cluster.log(output.df,0.1,29,30,3)
+migrate.cluster.log(output.df,0.1,30,31,3)
+migrate.cluster.log(output.df,0.1,31,32,3)
+migrate.cluster.log(output.df,0.1,32,33,3)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.015/")
+migrate.cluster.log(cluster_sample_data_1,0.015,4,4,1)
+migrate.cluster.log(output.df,0.015,4,5,1)
+migrate.cluster.log(output.df,0.015,5,6,1)
+migrate.cluster.log(output.df,0.015,6,7,1)
+migrate.cluster.log(output.df,0.015,7,8,1)
+migrate.cluster.log(output.df,0.015,8,9,1)
+migrate.cluster.log(output.df,0.015,9,10,1)
+migrate.cluster.log(output.df,0.015,10,11,1)
+migrate.cluster.log(output.df,0.015,11,12,1)
+migrate.cluster.log(output.df,0.015,12,13,1)
+migrate.cluster.log(output.df,0.015,13,14,1)
+migrate.cluster.log(output.df,0.015,14,15,1)
+migrate.cluster.log(output.df,0.015,15,16,1)
+migrate.cluster.log(output.df,0.015,16,17,1)
+migrate.cluster.log(output.df,0.015,17,18,1)
+migrate.cluster.log(output.df,0.015,18,19,1)
+migrate.cluster.log(output.df,0.015,19,20,1)
+migrate.cluster.log(output.df,0.015,20,21,1)
+migrate.cluster.log(output.df,0.015,21,22,1)
+migrate.cluster.log(output.df,0.015,22,23,1)
+migrate.cluster.log(output.df,0.015,23,24,1)
+migrate.cluster.log(output.df,0.015,24,25,1)
+migrate.cluster.log(output.df,0.015,25,26,1)
+migrate.cluster.log(output.df,0.015,26,27,1)
+migrate.cluster.log(output.df,0.015,27,28,1)
+migrate.cluster.log(output.df,0.015,28,29,1)
+migrate.cluster.log(output.df,0.015,29,30,1)
+migrate.cluster.log(output.df,0.015,30,31,1)
+migrate.cluster.log(output.df,0.015,31,32,1)
+migrate.cluster.log(output.df,0.015,32,33,1)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.015/")
+migrate.cluster.log(cluster_sample_data_2,0.015,4,4,2)
+migrate.cluster.log(output.df,0.015,4,5,2)
+migrate.cluster.log(output.df,0.015,5,6,2)
+migrate.cluster.log(output.df,0.015,6,7,2)
+migrate.cluster.log(output.df,0.015,7,8,2)
+migrate.cluster.log(output.df,0.015,8,9,2)
+migrate.cluster.log(output.df,0.015,9,10,2)
+migrate.cluster.log(output.df,0.015,10,11,2)
+migrate.cluster.log(output.df,0.015,11,12,2)
+migrate.cluster.log(output.df,0.015,12,13,2)
+migrate.cluster.log(output.df,0.015,13,14,2)
+migrate.cluster.log(output.df,0.015,14,15,2)
+migrate.cluster.log(output.df,0.015,15,16,2)
+migrate.cluster.log(output.df,0.015,16,17,2)
+migrate.cluster.log(output.df,0.015,17,18,2)
+migrate.cluster.log(output.df,0.015,18,19,2)
+migrate.cluster.log(output.df,0.015,19,20,2)
+migrate.cluster.log(output.df,0.015,20,21,2)
+migrate.cluster.log(output.df,0.015,21,22,2)
+migrate.cluster.log(output.df,0.015,22,23,2)
+migrate.cluster.log(output.df,0.015,23,24,2)
+migrate.cluster.log(output.df,0.015,24,25,2)
+migrate.cluster.log(output.df,0.015,25,26,2)
+migrate.cluster.log(output.df,0.015,26,27,2)
+migrate.cluster.log(output.df,0.015,27,28,2)
+migrate.cluster.log(output.df,0.015,28,29,2)
+migrate.cluster.log(output.df,0.015,29,30,2)
+migrate.cluster.log(output.df,0.015,30,31,2)
+migrate.cluster.log(output.df,0.015,31,32,2)
+migrate.cluster.log(output.df,0.015,32,33,2)
+
+```
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.015/")
+migrate.cluster.log(cluster_sample_data_3,0.015,4,4,3)
+migrate.cluster.log(output.df,0.015,4,5,3)
+migrate.cluster.log(output.df,0.015,5,6,3)
+migrate.cluster.log(output.df,0.015,6,7,3)
+migrate.cluster.log(output.df,0.015,7,8,3)
+migrate.cluster.log(output.df,0.015,8,9,3)
+migrate.cluster.log(output.df,0.015,9,10,3)
+migrate.cluster.log(output.df,0.015,10,11,3)
+migrate.cluster.log(output.df,0.015,11,12,3)
+migrate.cluster.log(output.df,0.015,12,13,3)
+migrate.cluster.log(output.df,0.015,13,14,3)
+migrate.cluster.log(output.df,0.015,14,15,3)
+migrate.cluster.log(output.df,0.015,15,16,3)
+migrate.cluster.log(output.df,0.015,16,17,3)
+migrate.cluster.log(output.df,0.015,17,18,3)
+migrate.cluster.log(output.df,0.015,18,19,3)
+migrate.cluster.log(output.df,0.015,19,20,3)
+migrate.cluster.log(output.df,0.015,20,21,3)
+migrate.cluster.log(output.df,0.015,21,22,3)
+migrate.cluster.log(output.df,0.015,22,23,3)
+migrate.cluster.log(output.df,0.015,23,24,3)
+migrate.cluster.log(output.df,0.015,24,25,3)
+migrate.cluster.log(output.df,0.015,25,26,3)
+migrate.cluster.log(output.df,0.015,26,27,3)
+migrate.cluster.log(output.df,0.015,27,28,3)
+migrate.cluster.log(output.df,0.015,28,29,3)
+migrate.cluster.log(output.df,0.015,29,30,3)
+migrate.cluster.log(output.df,0.015,30,31,3)
+migrate.cluster.log(output.df,0.015,31,32,3)
+migrate.cluster.log(output.df,0.015,32,33,3)
+
+```
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
+migrate.cluster.log(cluster_sample_data_1,0.01,4,4,1)
+migrate.cluster.log(output.df,0.01,4,5,1)
+migrate.cluster.log(output.df,0.01,5,6,1)
+migrate.cluster.log(output.df,0.01,6,7,1)
+migrate.cluster.log(output.df,0.01,7,8,1)
+migrate.cluster.log(output.df,0.01,8,9,1)
+migrate.cluster.log(output.df,0.01,9,10,1)
+migrate.cluster.log(output.df,0.01,10,11,1)
+migrate.cluster.log(output.df,0.01,11,12,1)
+migrate.cluster.log(output.df,0.01,12,13,1)
+migrate.cluster.log(output.df,0.01,13,14,1)
+migrate.cluster.log(output.df,0.01,14,15,1)
+migrate.cluster.log(output.df,0.01,15,16,1)
+migrate.cluster.log(output.df,0.01,16,17,1)
+migrate.cluster.log(output.df,0.01,17,18,1)
+migrate.cluster.log(output.df,0.01,18,19,1)
+migrate.cluster.log(output.df,0.01,19,20,1)
+migrate.cluster.log(output.df,0.01,20,21,1)
+migrate.cluster.log(output.df,0.01,21,22,1)
+migrate.cluster.log(output.df,0.01,22,23,1)
+migrate.cluster.log(output.df,0.01,23,24,1)
+migrate.cluster.log(output.df,0.01,24,25,1)
+migrate.cluster.log(output.df,0.01,25,26,1)
+migrate.cluster.log(output.df,0.01,26,27,1)
+migrate.cluster.log(output.df,0.01,27,28,1)
+migrate.cluster.log(output.df,0.01,28,29,1)
+migrate.cluster.log(output.df,0.01,29,30,1)
+migrate.cluster.log(output.df,0.01,30,31,1)
+migrate.cluster.log(output.df,0.01,31,32,1)
+migrate.cluster.log(output.df,0.01,32,33,1)
+
+```
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
+migrate.cluster.log(cluster_sample_data_2,0.01,4,4,2)
+migrate.cluster.log(output.df,0.01,4,5,2)
+migrate.cluster.log(output.df,0.01,5,6,2)
+migrate.cluster.log(output.df,0.01,6,7,2)
+migrate.cluster.log(output.df,0.01,7,8,2)
+migrate.cluster.log(output.df,0.01,8,9,2)
+migrate.cluster.log(output.df,0.01,9,10,2)
+migrate.cluster.log(output.df,0.01,10,11,2)
+migrate.cluster.log(output.df,0.01,11,12,2)
+migrate.cluster.log(output.df,0.01,12,13,2)
+migrate.cluster.log(output.df,0.01,13,14,2)
+migrate.cluster.log(output.df,0.01,14,15,2)
+migrate.cluster.log(output.df,0.01,15,16,2)
+migrate.cluster.log(output.df,0.01,16,17,2)
+migrate.cluster.log(output.df,0.01,17,18,2)
+migrate.cluster.log(output.df,0.01,18,19,2)
+migrate.cluster.log(output.df,0.01,19,20,2)
+migrate.cluster.log(output.df,0.01,20,21,2)
+migrate.cluster.log(output.df,0.01,21,22,2)
+migrate.cluster.log(output.df,0.01,22,23,2)
+migrate.cluster.log(output.df,0.01,23,24,2)
+migrate.cluster.log(output.df,0.01,24,25,2)
+migrate.cluster.log(output.df,0.01,25,26,2)
+migrate.cluster.log(output.df,0.01,26,27,2)
+migrate.cluster.log(output.df,0.01,27,28,2)
+migrate.cluster.log(output.df,0.01,28,29,2)
+migrate.cluster.log(output.df,0.01,29,30,2)
+migrate.cluster.log(output.df,0.01,30,31,2)
+migrate.cluster.log(output.df,0.01,31,32,2)
+migrate.cluster.log(output.df,0.01,32,33,2)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
+migrate.cluster.log(cluster_sample_data_3,0.01,4,4,3)
+migrate.cluster.log(output.df,0.01,4,5,3)
+migrate.cluster.log(output.df,0.01,5,6,3)
+migrate.cluster.log(output.df,0.01,6,7,3)
+migrate.cluster.log(output.df,0.01,7,8,3)
+migrate.cluster.log(output.df,0.01,8,9,3)
+migrate.cluster.log(output.df,0.01,9,10,3)
+migrate.cluster.log(output.df,0.01,10,11,3)
+migrate.cluster.log(output.df,0.01,11,12,3)
+migrate.cluster.log(output.df,0.01,12,13,3)
+migrate.cluster.log(output.df,0.01,13,14,3)
+migrate.cluster.log(output.df,0.01,14,15,3)
+migrate.cluster.log(output.df,0.01,15,16,3)
+migrate.cluster.log(output.df,0.01,16,17,3)
+migrate.cluster.log(output.df,0.01,17,18,3)
+migrate.cluster.log(output.df,0.01,18,19,3)
+migrate.cluster.log(output.df,0.01,19,20,3)
+migrate.cluster.log(output.df,0.01,20,21,3)
+migrate.cluster.log(output.df,0.01,21,22,3)
+migrate.cluster.log(output.df,0.01,22,23,3)
+migrate.cluster.log(output.df,0.01,23,24,3)
+migrate.cluster.log(output.df,0.01,24,25,3)
+migrate.cluster.log(output.df,0.01,25,26,3)
+migrate.cluster.log(output.df,0.01,26,27,3)
+migrate.cluster.log(output.df,0.01,27,28,3)
+migrate.cluster.log(output.df,0.01,28,29,3)
+migrate.cluster.log(output.df,0.01,29,30,3)
+migrate.cluster.log(output.df,0.01,30,31,3)
+migrate.cluster.log(output.df,0.01,31,32,3)
+migrate.cluster.log(output.df,0.01,32,33,3)
+
+```
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.02/")
+migrate.cluster.log(cluster_sample_data_1,0.02,4,4,1)
+migrate.cluster.log(output.df,0.02,4,5,1)
+migrate.cluster.log(output.df,0.02,5,6,1)
+migrate.cluster.log(output.df,0.02,6,7,1)
+migrate.cluster.log(output.df,0.02,7,8,1)
+migrate.cluster.log(output.df,0.02,8,9,1)
+migrate.cluster.log(output.df,0.02,9,10,1)
+migrate.cluster.log(output.df,0.02,10,11,1)
+migrate.cluster.log(output.df,0.02,11,12,1)
+migrate.cluster.log(output.df,0.02,12,13,1)
+migrate.cluster.log(output.df,0.02,13,14,1)
+migrate.cluster.log(output.df,0.02,14,15,1)
+migrate.cluster.log(output.df,0.02,15,16,1)
+migrate.cluster.log(output.df,0.02,16,17,1)
+migrate.cluster.log(output.df,0.02,17,18,1)
+migrate.cluster.log(output.df,0.02,18,19,1)
+migrate.cluster.log(output.df,0.02,19,20,1)
+migrate.cluster.log(output.df,0.02,20,21,1)
+migrate.cluster.log(output.df,0.02,21,22,1)
+migrate.cluster.log(output.df,0.02,22,23,1)
+migrate.cluster.log(output.df,0.02,23,24,1)
+migrate.cluster.log(output.df,0.02,24,25,1)
+migrate.cluster.log(output.df,0.02,25,26,1)
+migrate.cluster.log(output.df,0.02,26,27,1)
+migrate.cluster.log(output.df,0.02,27,28,1)
+migrate.cluster.log(output.df,0.02,28,29,1)
+migrate.cluster.log(output.df,0.02,29,30,1)
+migrate.cluster.log(output.df,0.02,30,31,1)
+migrate.cluster.log(output.df,0.02,31,32,1)
+migrate.cluster.log(output.df,0.02,32,33,1)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.02/")
+migrate.cluster.log(cluster_sample_data_2,0.02,4,4,2)
+migrate.cluster.log(output.df,0.02,4,5,2)
+migrate.cluster.log(output.df,0.02,5,6,2)
+migrate.cluster.log(output.df,0.02,6,7,2)
+migrate.cluster.log(output.df,0.02,7,8,2)
+migrate.cluster.log(output.df,0.02,8,9,2)
+migrate.cluster.log(output.df,0.02,9,10,2)
+migrate.cluster.log(output.df,0.02,10,11,2)
+migrate.cluster.log(output.df,0.02,11,12,2)
+migrate.cluster.log(output.df,0.02,12,13,2)
+migrate.cluster.log(output.df,0.02,13,14,2)
+migrate.cluster.log(output.df,0.02,14,15,2)
+migrate.cluster.log(output.df,0.02,15,16,2)
+migrate.cluster.log(output.df,0.02,16,17,2)
+migrate.cluster.log(output.df,0.02,17,18,2)
+migrate.cluster.log(output.df,0.02,18,19,2)
+migrate.cluster.log(output.df,0.02,19,20,2)
+migrate.cluster.log(output.df,0.02,20,21,2)
+migrate.cluster.log(output.df,0.02,21,22,2)
+migrate.cluster.log(output.df,0.02,22,23,2)
+migrate.cluster.log(output.df,0.02,23,24,2)
+migrate.cluster.log(output.df,0.02,24,25,2)
+migrate.cluster.log(output.df,0.02,25,26,2)
+migrate.cluster.log(output.df,0.02,26,27,2)
+migrate.cluster.log(output.df,0.02,27,28,2)
+migrate.cluster.log(output.df,0.02,28,29,2)
+migrate.cluster.log(output.df,0.02,29,30,2)
+migrate.cluster.log(output.df,0.02,30,31,2)
+migrate.cluster.log(output.df,0.02,31,32,2)
+migrate.cluster.log(output.df,0.02,32,33,2)
+
+```
+
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.02/")
+migrate.cluster.log(cluster_sample_data_3,0.02,4,4,3)
+migrate.cluster.log(output.df,0.02,4,5,3)
+migrate.cluster.log(output.df,0.02,5,6,3)
+migrate.cluster.log(output.df,0.02,6,7,3)
+migrate.cluster.log(output.df,0.02,7,8,3)
+migrate.cluster.log(output.df,0.02,8,9,3)
+migrate.cluster.log(output.df,0.02,9,10,3)
+migrate.cluster.log(output.df,0.02,10,11,3)
+migrate.cluster.log(output.df,0.02,11,12,3)
+migrate.cluster.log(output.df,0.02,12,13,3)
+migrate.cluster.log(output.df,0.02,13,14,3)
+migrate.cluster.log(output.df,0.02,14,15,3)
+migrate.cluster.log(output.df,0.02,15,16,3)
+migrate.cluster.log(output.df,0.02,16,17,3)
+migrate.cluster.log(output.df,0.02,17,18,3)
+migrate.cluster.log(output.df,0.02,18,19,3)
+migrate.cluster.log(output.df,0.02,19,20,3)
+migrate.cluster.log(output.df,0.02,20,21,3)
+migrate.cluster.log(output.df,0.02,21,22,3)
+migrate.cluster.log(output.df,0.02,22,23,3)
+migrate.cluster.log(output.df,0.02,23,24,3)
+migrate.cluster.log(output.df,0.02,24,25,3)
+migrate.cluster.log(output.df,0.02,25,26,3)
+migrate.cluster.log(output.df,0.02,26,27,3)
+migrate.cluster.log(output.df,0.02,27,28,3)
+migrate.cluster.log(output.df,0.02,28,29,3)
+migrate.cluster.log(output.df,0.02,29,30,3)
+migrate.cluster.log(output.df,0.02,30,31,3)
+migrate.cluster.log(output.df,0.02,31,32,3)
+migrate.cluster.log(output.df,0.02,32,33,3)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.03/")
+migrate.cluster.log(cluster_sample_data_1,0.03,4,4,1)
+migrate.cluster.log(output.df,0.03,4,5,1)
+migrate.cluster.log(output.df,0.03,5,6,1)
+migrate.cluster.log(output.df,0.03,6,7,1)
+migrate.cluster.log(output.df,0.03,7,8,1)
+migrate.cluster.log(output.df,0.03,8,9,1)
+migrate.cluster.log(output.df,0.03,9,10,1)
+migrate.cluster.log(output.df,0.03,10,11,1)
+migrate.cluster.log(output.df,0.03,11,12,1)
+migrate.cluster.log(output.df,0.03,12,13,1)
+migrate.cluster.log(output.df,0.03,13,14,1)
+migrate.cluster.log(output.df,0.03,14,15,1)
+migrate.cluster.log(output.df,0.03,15,16,1)
+migrate.cluster.log(output.df,0.03,16,17,1)
+migrate.cluster.log(output.df,0.03,17,18,1)
+migrate.cluster.log(output.df,0.03,18,19,1)
+migrate.cluster.log(output.df,0.03,19,20,1)
+migrate.cluster.log(output.df,0.03,20,21,1)
+migrate.cluster.log(output.df,0.03,21,22,1)
+migrate.cluster.log(output.df,0.03,22,23,1)
+migrate.cluster.log(output.df,0.03,23,24,1)
+migrate.cluster.log(output.df,0.03,24,25,1)
+migrate.cluster.log(output.df,0.03,25,26,1)
+migrate.cluster.log(output.df,0.03,26,27,1)
+migrate.cluster.log(output.df,0.03,27,28,1)
+migrate.cluster.log(output.df,0.03,28,29,1)
+migrate.cluster.log(output.df,0.03,29,30,1)
+migrate.cluster.log(output.df,0.03,30,31,1)
+migrate.cluster.log(output.df,0.03,31,32,1)
+migrate.cluster.log(output.df,0.03,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.03/")
+migrate.cluster.log(cluster_sample_data_2,0.03,4,4,2)
+migrate.cluster.log(output.df,0.03,4,5,2)
+migrate.cluster.log(output.df,0.03,5,6,2)
+migrate.cluster.log(output.df,0.03,6,7,2)
+migrate.cluster.log(output.df,0.03,7,8,2)
+migrate.cluster.log(output.df,0.03,8,9,2)
+migrate.cluster.log(output.df,0.03,9,10,2)
+migrate.cluster.log(output.df,0.03,10,11,2)
+migrate.cluster.log(output.df,0.03,11,12,2)
+migrate.cluster.log(output.df,0.03,12,13,2)
+migrate.cluster.log(output.df,0.03,13,14,2)
+migrate.cluster.log(output.df,0.03,14,15,2)
+migrate.cluster.log(output.df,0.03,15,16,2)
+migrate.cluster.log(output.df,0.03,16,17,2)
+migrate.cluster.log(output.df,0.03,17,18,2)
+migrate.cluster.log(output.df,0.03,18,19,2)
+migrate.cluster.log(output.df,0.03,19,20,2)
+migrate.cluster.log(output.df,0.03,20,21,2)
+migrate.cluster.log(output.df,0.03,21,22,2)
+migrate.cluster.log(output.df,0.03,22,23,2)
+migrate.cluster.log(output.df,0.03,23,24,2)
+migrate.cluster.log(output.df,0.03,24,25,2)
+migrate.cluster.log(output.df,0.03,25,26,2)
+migrate.cluster.log(output.df,0.03,26,27,2)
+migrate.cluster.log(output.df,0.03,27,28,2)
+migrate.cluster.log(output.df,0.03,28,29,2)
+migrate.cluster.log(output.df,0.03,29,30,2)
+migrate.cluster.log(output.df,0.03,30,31,2)
+migrate.cluster.log(output.df,0.03,31,32,2)
+migrate.cluster.log(output.df,0.03,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.03/")
+migrate.cluster.log(cluster_sample_data_3,0.03,4,4,3)
+migrate.cluster.log(output.df,0.03,4,5,3)
+migrate.cluster.log(output.df,0.03,5,6,3)
+migrate.cluster.log(output.df,0.03,6,7,3)
+migrate.cluster.log(output.df,0.03,7,8,3)
+migrate.cluster.log(output.df,0.03,8,9,3)
+migrate.cluster.log(output.df,0.03,9,10,3)
+migrate.cluster.log(output.df,0.03,10,11,3)
+migrate.cluster.log(output.df,0.03,11,12,3)
+migrate.cluster.log(output.df,0.03,12,13,3)
+migrate.cluster.log(output.df,0.03,13,14,3)
+migrate.cluster.log(output.df,0.03,14,15,3)
+migrate.cluster.log(output.df,0.03,15,16,3)
+migrate.cluster.log(output.df,0.03,16,17,3)
+migrate.cluster.log(output.df,0.03,17,18,3)
+migrate.cluster.log(output.df,0.03,18,19,3)
+migrate.cluster.log(output.df,0.03,19,20,3)
+migrate.cluster.log(output.df,0.03,20,21,3)
+migrate.cluster.log(output.df,0.03,21,22,3)
+migrate.cluster.log(output.df,0.03,22,23,3)
+migrate.cluster.log(output.df,0.03,23,24,3)
+migrate.cluster.log(output.df,0.03,24,25,3)
+migrate.cluster.log(output.df,0.03,25,26,3)
+migrate.cluster.log(output.df,0.03,26,27,3)
+migrate.cluster.log(output.df,0.03,27,28,3)
+migrate.cluster.log(output.df,0.03,28,29,3)
+migrate.cluster.log(output.df,0.03,29,30,3)
+migrate.cluster.log(output.df,0.03,30,31,3)
+migrate.cluster.log(output.df,0.03,31,32,3)
+migrate.cluster.log(output.df,0.03,32,33,3)
+
+```
+
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.04/")
+migrate.cluster.log(cluster_sample_data_1,0.04,4,4,1)
+migrate.cluster.log(output.df,0.04,4,5,1)
+migrate.cluster.log(output.df,0.04,5,6,1)
+migrate.cluster.log(output.df,0.04,6,7,1)
+migrate.cluster.log(output.df,0.04,7,8,1)
+migrate.cluster.log(output.df,0.04,8,9,1)
+migrate.cluster.log(output.df,0.04,9,10,1)
+migrate.cluster.log(output.df,0.04,10,11,1)
+migrate.cluster.log(output.df,0.04,11,12,1)
+migrate.cluster.log(output.df,0.04,12,13,1)
+migrate.cluster.log(output.df,0.04,13,14,1)
+migrate.cluster.log(output.df,0.04,14,15,1)
+migrate.cluster.log(output.df,0.04,15,16,1)
+migrate.cluster.log(output.df,0.04,16,17,1)
+migrate.cluster.log(output.df,0.04,17,18,1)
+migrate.cluster.log(output.df,0.04,18,19,1)
+migrate.cluster.log(output.df,0.04,19,20,1)
+migrate.cluster.log(output.df,0.04,20,21,1)
+migrate.cluster.log(output.df,0.04,21,22,1)
+migrate.cluster.log(output.df,0.04,22,23,1)
+migrate.cluster.log(output.df,0.04,23,24,1)
+migrate.cluster.log(output.df,0.04,24,25,1)
+migrate.cluster.log(output.df,0.04,25,26,1)
+migrate.cluster.log(output.df,0.04,26,27,1)
+migrate.cluster.log(output.df,0.04,27,28,1)
+migrate.cluster.log(output.df,0.04,28,29,1)
+migrate.cluster.log(output.df,0.04,29,30,1)
+migrate.cluster.log(output.df,0.04,30,31,1)
+migrate.cluster.log(output.df,0.04,31,32,1)
+migrate.cluster.log(output.df,0.04,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.04/")
+migrate.cluster.log(cluster_sample_data_2,0.04,4,4,2)
+migrate.cluster.log(output.df,0.04,4,5,2)
+migrate.cluster.log(output.df,0.04,5,6,2)
+migrate.cluster.log(output.df,0.04,6,7,2)
+migrate.cluster.log(output.df,0.04,7,8,2)
+migrate.cluster.log(output.df,0.04,8,9,2)
+migrate.cluster.log(output.df,0.04,9,10,2)
+migrate.cluster.log(output.df,0.04,10,11,2)
+migrate.cluster.log(output.df,0.04,11,12,2)
+migrate.cluster.log(output.df,0.04,12,13,2)
+migrate.cluster.log(output.df,0.04,13,14,2)
+migrate.cluster.log(output.df,0.04,14,15,2)
+migrate.cluster.log(output.df,0.04,15,16,2)
+migrate.cluster.log(output.df,0.04,16,17,2)
+migrate.cluster.log(output.df,0.04,17,18,2)
+migrate.cluster.log(output.df,0.04,18,19,2)
+migrate.cluster.log(output.df,0.04,19,20,2)
+migrate.cluster.log(output.df,0.04,20,21,2)
+migrate.cluster.log(output.df,0.04,21,22,2)
+migrate.cluster.log(output.df,0.04,22,23,2)
+migrate.cluster.log(output.df,0.04,23,24,2)
+migrate.cluster.log(output.df,0.04,24,25,2)
+migrate.cluster.log(output.df,0.04,25,26,2)
+migrate.cluster.log(output.df,0.04,26,27,2)
+migrate.cluster.log(output.df,0.04,27,28,2)
+migrate.cluster.log(output.df,0.04,28,29,2)
+migrate.cluster.log(output.df,0.04,29,30,2)
+migrate.cluster.log(output.df,0.04,30,31,2)
+migrate.cluster.log(output.df,0.04,31,32,2)
+migrate.cluster.log(output.df,0.04,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.04/")
+migrate.cluster.log(cluster_sample_data_3,0.04,4,4,3)
+migrate.cluster.log(output.df,0.04,4,5,3)
+migrate.cluster.log(output.df,0.04,5,6,3)
+migrate.cluster.log(output.df,0.04,6,7,3)
+migrate.cluster.log(output.df,0.04,7,8,3)
+migrate.cluster.log(output.df,0.04,8,9,3)
+migrate.cluster.log(output.df,0.04,9,10,3)
+migrate.cluster.log(output.df,0.04,10,11,3)
+migrate.cluster.log(output.df,0.04,11,12,3)
+migrate.cluster.log(output.df,0.04,12,13,3)
+migrate.cluster.log(output.df,0.04,13,14,3)
+migrate.cluster.log(output.df,0.04,14,15,3)
+migrate.cluster.log(output.df,0.04,15,16,3)
+migrate.cluster.log(output.df,0.04,16,17,3)
+migrate.cluster.log(output.df,0.04,17,18,3)
+migrate.cluster.log(output.df,0.04,18,19,3)
+migrate.cluster.log(output.df,0.04,19,20,3)
+migrate.cluster.log(output.df,0.04,20,21,3)
+migrate.cluster.log(output.df,0.04,21,22,3)
+migrate.cluster.log(output.df,0.04,22,23,3)
+migrate.cluster.log(output.df,0.04,23,24,3)
+migrate.cluster.log(output.df,0.04,24,25,3)
+migrate.cluster.log(output.df,0.04,25,26,3)
+migrate.cluster.log(output.df,0.04,26,27,3)
+migrate.cluster.log(output.df,0.04,27,28,3)
+migrate.cluster.log(output.df,0.04,28,29,3)
+migrate.cluster.log(output.df,0.04,29,30,3)
+migrate.cluster.log(output.df,0.04,30,31,3)
+migrate.cluster.log(output.df,0.04,31,32,3)
+migrate.cluster.log(output.df,0.04,32,33,3)
+
+```
+
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.0/")
+migrate.cluster.log(cluster_sample_data_1,0,4,4,1)
+migrate.cluster.log(output.df,0.0,4,5,1)
+migrate.cluster.log(output.df,0.0,5,6,1)
+migrate.cluster.log(output.df,0.0,6,7,1)
+migrate.cluster.log(output.df,0.0,7,8,1)
+migrate.cluster.log(output.df,0.0,8,9,1)
+migrate.cluster.log(output.df,0.0,9,10,1)
+migrate.cluster.log(output.df,0.0,10,11,1)
+migrate.cluster.log(output.df,0.0,11,12,1)
+migrate.cluster.log(output.df,0.0,12,13,1)
+migrate.cluster.log(output.df,0.0,13,14,1)
+migrate.cluster.log(output.df,0.0,14,15,1)
+migrate.cluster.log(output.df,0.0,15,16,1)
+migrate.cluster.log(output.df,0.0,16,17,1)
+migrate.cluster.log(output.df,0.0,17,18,1)
+migrate.cluster.log(output.df,0.0,18,19,1)
+migrate.cluster.log(output.df,0.0,19,20,1)
+migrate.cluster.log(output.df,0.0,20,21,1)
+migrate.cluster.log(output.df,0.0,21,22,1)
+migrate.cluster.log(output.df,0.0,22,23,1)
+migrate.cluster.log(output.df,0.0,23,24,1)
+migrate.cluster.log(output.df,0.0,24,25,1)
+migrate.cluster.log(output.df,0.0,25,26,1)
+migrate.cluster.log(output.df,0.0,26,27,1)
+migrate.cluster.log(output.df,0.0,27,28,1)
+migrate.cluster.log(output.df,0.0,28,29,1)
+migrate.cluster.log(output.df,0.0,29,30,1)
+migrate.cluster.log(output.df,0.0,30,31,1)
+migrate.cluster.log(output.df,0.0,31,32,1)
+migrate.cluster.log(output.df,0.0,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.0/")
+migrate.cluster.log(cluster_sample_data_2,0,4,4,2)
+migrate.cluster.log(output.df,0.0,4,5,2)
+migrate.cluster.log(output.df,0.0,5,6,2)
+migrate.cluster.log(output.df,0.0,6,7,2)
+migrate.cluster.log(output.df,0.0,7,8,2)
+migrate.cluster.log(output.df,0.0,8,9,2)
+migrate.cluster.log(output.df,0.0,9,10,2)
+migrate.cluster.log(output.df,0.0,10,11,2)
+migrate.cluster.log(output.df,0.0,11,12,2)
+migrate.cluster.log(output.df,0.0,12,13,2)
+migrate.cluster.log(output.df,0.0,13,14,2)
+migrate.cluster.log(output.df,0.0,14,15,2)
+migrate.cluster.log(output.df,0.0,15,16,2)
+migrate.cluster.log(output.df,0.0,16,17,2)
+migrate.cluster.log(output.df,0.0,17,18,2)
+migrate.cluster.log(output.df,0.0,18,19,2)
+migrate.cluster.log(output.df,0.0,19,20,2)
+migrate.cluster.log(output.df,0.0,20,21,2)
+migrate.cluster.log(output.df,0.0,21,22,2)
+migrate.cluster.log(output.df,0.0,22,23,2)
+migrate.cluster.log(output.df,0.0,23,24,2)
+migrate.cluster.log(output.df,0.0,24,25,2)
+migrate.cluster.log(output.df,0.0,25,26,2)
+migrate.cluster.log(output.df,0.0,26,27,2)
+migrate.cluster.log(output.df,0.0,27,28,2)
+migrate.cluster.log(output.df,0.0,28,29,2)
+migrate.cluster.log(output.df,0.0,29,30,2)
+migrate.cluster.log(output.df,0.0,30,31,2)
+migrate.cluster.log(output.df,0.0,31,32,2)
+migrate.cluster.log(output.df,0.0,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.0/")
+migrate.cluster.log(cluster_sample_data_3,0,4,4,3)
+migrate.cluster.log(output.df,0.0,4,5,3)
+migrate.cluster.log(output.df,0.0,5,6,3)
+migrate.cluster.log(output.df,0.0,6,7,3)
+migrate.cluster.log(output.df,0.0,7,8,3)
+migrate.cluster.log(output.df,0.0,8,9,3)
+migrate.cluster.log(output.df,0.0,9,10,3)
+migrate.cluster.log(output.df,0.0,10,11,3)
+migrate.cluster.log(output.df,0.0,11,12,3)
+migrate.cluster.log(output.df,0.0,12,13,3)
+migrate.cluster.log(output.df,0.0,13,14,3)
+migrate.cluster.log(output.df,0.0,14,15,3)
+migrate.cluster.log(output.df,0.0,15,16,3)
+migrate.cluster.log(output.df,0.0,16,17,3)
+migrate.cluster.log(output.df,0.0,17,18,3)
+migrate.cluster.log(output.df,0.0,18,19,3)
+migrate.cluster.log(output.df,0.0,19,20,3)
+migrate.cluster.log(output.df,0.0,20,21,3)
+migrate.cluster.log(output.df,0.0,21,22,3)
+migrate.cluster.log(output.df,0.0,22,23,3)
+migrate.cluster.log(output.df,0.0,23,24,3)
+migrate.cluster.log(output.df,0.0,24,25,3)
+migrate.cluster.log(output.df,0.0,25,26,3)
+migrate.cluster.log(output.df,0.0,26,27,3)
+migrate.cluster.log(output.df,0.0,27,28,3)
+migrate.cluster.log(output.df,0.0,28,29,3)
+migrate.cluster.log(output.df,0.0,29,30,3)
+migrate.cluster.log(output.df,0.0,30,31,3)
+migrate.cluster.log(output.df,0.0,31,32,3)
+migrate.cluster.log(output.df,0.0,32,33,3)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.005/")
+migrate.cluster.log(cluster_sample_data_1,0.005,4,4,1)
+migrate.cluster.log(output.df,0.005,4,5,1)
+migrate.cluster.log(output.df,0.005,5,6,1)
+migrate.cluster.log(output.df,0.005,6,7,1)
+migrate.cluster.log(output.df,0.005,7,8,1)
+migrate.cluster.log(output.df,0.005,8,9,1)
+migrate.cluster.log(output.df,0.005,9,10,1)
+migrate.cluster.log(output.df,0.005,10,11,1)
+migrate.cluster.log(output.df,0.005,11,12,1)
+migrate.cluster.log(output.df,0.005,12,13,1)
+migrate.cluster.log(output.df,0.005,13,14,1)
+migrate.cluster.log(output.df,0.005,14,15,1)
+migrate.cluster.log(output.df,0.005,15,16,1)
+migrate.cluster.log(output.df,0.005,16,17,1)
+migrate.cluster.log(output.df,0.005,17,18,1)
+migrate.cluster.log(output.df,0.005,18,19,1)
+migrate.cluster.log(output.df,0.005,19,20,1)
+migrate.cluster.log(output.df,0.005,20,21,1)
+migrate.cluster.log(output.df,0.005,21,22,1)
+migrate.cluster.log(output.df,0.005,22,23,1)
+migrate.cluster.log(output.df,0.005,23,24,1)
+migrate.cluster.log(output.df,0.005,24,25,1)
+migrate.cluster.log(output.df,0.005,25,26,1)
+migrate.cluster.log(output.df,0.005,26,27,1)
+migrate.cluster.log(output.df,0.005,27,28,1)
+migrate.cluster.log(output.df,0.005,28,29,1)
+migrate.cluster.log(output.df,0.005,29,30,1)
+migrate.cluster.log(output.df,0.005,30,31,1)
+migrate.cluster.log(output.df,0.005,31,32,1)
+migrate.cluster.log(output.df,0.005,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.005/")
+migrate.cluster.log(cluster_sample_data_2,0.005,4,4,2)
+migrate.cluster.log(output.df,0.005,4,5,2)
+migrate.cluster.log(output.df,0.005,5,6,2)
+migrate.cluster.log(output.df,0.005,6,7,2)
+migrate.cluster.log(output.df,0.005,7,8,2)
+migrate.cluster.log(output.df,0.005,8,9,2)
+migrate.cluster.log(output.df,0.005,9,10,2)
+migrate.cluster.log(output.df,0.005,10,11,2)
+migrate.cluster.log(output.df,0.005,11,12,2)
+migrate.cluster.log(output.df,0.005,12,13,2)
+migrate.cluster.log(output.df,0.005,13,14,2)
+migrate.cluster.log(output.df,0.005,14,15,2)
+migrate.cluster.log(output.df,0.005,15,16,2)
+migrate.cluster.log(output.df,0.005,16,17,2)
+migrate.cluster.log(output.df,0.005,17,18,2)
+migrate.cluster.log(output.df,0.005,18,19,2)
+migrate.cluster.log(output.df,0.005,19,20,2)
+migrate.cluster.log(output.df,0.005,20,21,2)
+migrate.cluster.log(output.df,0.005,21,22,2)
+migrate.cluster.log(output.df,0.005,22,23,2)
+migrate.cluster.log(output.df,0.005,23,24,2)
+migrate.cluster.log(output.df,0.005,24,25,2)
+migrate.cluster.log(output.df,0.005,25,26,2)
+migrate.cluster.log(output.df,0.005,26,27,2)
+migrate.cluster.log(output.df,0.005,27,28,2)
+migrate.cluster.log(output.df,0.005,28,29,2)
+migrate.cluster.log(output.df,0.005,29,30,2)
+migrate.cluster.log(output.df,0.005,30,31,2)
+migrate.cluster.log(output.df,0.005,31,32,2)
+migrate.cluster.log(output.df,0.005,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/logistic growth/mr0.005/")
+migrate.cluster.log(cluster_sample_data_3,0.005,4,4,3)
+migrate.cluster.log(output.df,0.005,4,5,3)
+migrate.cluster.log(output.df,0.005,5,6,3)
+migrate.cluster.log(output.df,0.005,6,7,3)
+migrate.cluster.log(output.df,0.005,7,8,3)
+migrate.cluster.log(output.df,0.005,8,9,3)
+migrate.cluster.log(output.df,0.005,9,10,3)
+migrate.cluster.log(output.df,0.005,10,11,3)
+migrate.cluster.log(output.df,0.005,11,12,3)
+migrate.cluster.log(output.df,0.005,12,13,3)
+migrate.cluster.log(output.df,0.005,13,14,3)
+migrate.cluster.log(output.df,0.005,14,15,3)
+migrate.cluster.log(output.df,0.005,15,16,3)
+migrate.cluster.log(output.df,0.005,16,17,3)
+migrate.cluster.log(output.df,0.005,17,18,3)
+migrate.cluster.log(output.df,0.005,18,19,3)
+migrate.cluster.log(output.df,0.005,19,20,3)
+migrate.cluster.log(output.df,0.005,20,21,3)
+migrate.cluster.log(output.df,0.005,21,22,3)
+migrate.cluster.log(output.df,0.005,22,23,3)
+migrate.cluster.log(output.df,0.005,23,24,3)
+migrate.cluster.log(output.df,0.005,24,25,3)
+migrate.cluster.log(output.df,0.005,25,26,3)
+migrate.cluster.log(output.df,0.005,26,27,3)
+migrate.cluster.log(output.df,0.005,27,28,3)
+migrate.cluster.log(output.df,0.005,28,29,3)
+migrate.cluster.log(output.df,0.005,29,30,3)
+migrate.cluster.log(output.df,0.005,30,31,3)
+migrate.cluster.log(output.df,0.005,31,32,3)
+migrate.cluster.log(output.df,0.005,32,33,3)
+
+```
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/logistic growth/mr0.07/")
+migrate.cluster.log(cluster_sample_data_1,0.07,4,4,1)
+migrate.cluster.log(output.df,0.07,4,5,1)
+migrate.cluster.log(output.df,0.07,5,6,1)
+migrate.cluster.log(output.df,0.07,6,7,1)
+migrate.cluster.log(output.df,0.07,7,8,1)
+migrate.cluster.log(output.df,0.07,8,9,1)
+migrate.cluster.log(output.df,0.07,9,10,1)
+migrate.cluster.log(output.df,0.07,10,11,1)
+migrate.cluster.log(output.df,0.07,11,12,1)
+migrate.cluster.log(output.df,0.07,12,13,1)
+migrate.cluster.log(output.df,0.07,13,14,1)
+migrate.cluster.log(output.df,0.07,14,15,1)
+migrate.cluster.log(output.df,0.07,15,16,1)
+migrate.cluster.log(output.df,0.07,16,17,1)
+migrate.cluster.log(output.df,0.07,17,18,1)
+migrate.cluster.log(output.df,0.07,18,19,1)
+migrate.cluster.log(output.df,0.07,19,20,1)
+migrate.cluster.log(output.df,0.07,20,21,1)
+migrate.cluster.log(output.df,0.07,21,22,1)
+migrate.cluster.log(output.df,0.07,22,23,1)
+migrate.cluster.log(output.df,0.07,23,24,1)
+migrate.cluster.log(output.df,0.07,24,25,1)
+migrate.cluster.log(output.df,0.07,25,26,1)
+migrate.cluster.log(output.df,0.07,26,27,1)
+migrate.cluster.log(output.df,0.07,27,28,1)
+migrate.cluster.log(output.df,0.07,28,29,1)
+migrate.cluster.log(output.df,0.07,29,30,1)
+migrate.cluster.log(output.df,0.07,30,31,1)
+migrate.cluster.log(output.df,0.07,31,32,1)
+migrate.cluster.log(output.df,0.07,32,33,1)
+
+```
+
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/logistic growth/mr0.07/")
+migrate.cluster.log(cluster_sample_data_2,0.07,4,4,2)
+migrate.cluster.log(output.df,0.07,4,5,2)
+migrate.cluster.log(output.df,0.07,5,6,2)
+migrate.cluster.log(output.df,0.07,6,7,2)
+migrate.cluster.log(output.df,0.07,7,8,2)
+migrate.cluster.log(output.df,0.07,8,9,2)
+migrate.cluster.log(output.df,0.07,9,10,2)
+migrate.cluster.log(output.df,0.07,10,11,2)
+migrate.cluster.log(output.df,0.07,11,12,2)
+migrate.cluster.log(output.df,0.07,12,13,2)
+migrate.cluster.log(output.df,0.07,13,14,2)
+migrate.cluster.log(output.df,0.07,14,15,2)
+migrate.cluster.log(output.df,0.07,15,16,2)
+migrate.cluster.log(output.df,0.07,16,17,2)
+migrate.cluster.log(output.df,0.07,17,18,2)
+migrate.cluster.log(output.df,0.07,18,19,2)
+migrate.cluster.log(output.df,0.07,19,20,2)
+migrate.cluster.log(output.df,0.07,20,21,2)
+migrate.cluster.log(output.df,0.07,21,22,2)
+migrate.cluster.log(output.df,0.07,22,23,2)
+migrate.cluster.log(output.df,0.07,23,24,2)
+migrate.cluster.log(output.df,0.07,24,25,2)
+migrate.cluster.log(output.df,0.07,25,26,2)
+migrate.cluster.log(output.df,0.07,26,27,2)
+migrate.cluster.log(output.df,0.07,27,28,2)
+migrate.cluster.log(output.df,0.07,28,29,2)
+migrate.cluster.log(output.df,0.07,29,30,2)
+migrate.cluster.log(output.df,0.07,30,31,2)
+migrate.cluster.log(output.df,0.07,31,32,2)
+migrate.cluster.log(output.df,0.07,32,33,2)
+
+```
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/logistic growth/mr0.07/")
+migrate.cluster.log(cluster_sample_data_3,0.07,4,4,3)
+migrate.cluster.log(output.df,0.07,4,5,3)
+migrate.cluster.log(output.df,0.07,5,6,3)
+migrate.cluster.log(output.df,0.07,6,7,3)
+migrate.cluster.log(output.df,0.07,7,8,3)
+migrate.cluster.log(output.df,0.07,8,9,3)
+migrate.cluster.log(output.df,0.07,9,10,3)
+migrate.cluster.log(output.df,0.07,10,11,3)
+migrate.cluster.log(output.df,0.07,11,12,3)
+migrate.cluster.log(output.df,0.07,12,13,3)
+migrate.cluster.log(output.df,0.07,13,14,3)
+migrate.cluster.log(output.df,0.07,14,15,3)
+migrate.cluster.log(output.df,0.07,15,16,3)
+migrate.cluster.log(output.df,0.07,16,17,3)
+migrate.cluster.log(output.df,0.07,17,18,3)
+migrate.cluster.log(output.df,0.07,18,19,3)
+migrate.cluster.log(output.df,0.07,19,20,3)
+migrate.cluster.log(output.df,0.07,20,21,3)
+migrate.cluster.log(output.df,0.07,21,22,3)
+migrate.cluster.log(output.df,0.07,22,23,3)
+migrate.cluster.log(output.df,0.07,23,24,3)
+migrate.cluster.log(output.df,0.07,24,25,3)
+migrate.cluster.log(output.df,0.07,25,26,3)
+migrate.cluster.log(output.df,0.07,26,27,3)
+migrate.cluster.log(output.df,0.07,27,28,3)
+migrate.cluster.log(output.df,0.07,28,29,3)
+migrate.cluster.log(output.df,0.07,29,30,3)
+migrate.cluster.log(output.df,0.07,30,31,3)
+migrate.cluster.log(output.df,0.07,31,32,3)
+migrate.cluster.log(output.df,0.07,32,33,3)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Data for Figure B
+
+# Start here
+```{r}
+setwd("./summarycsv/migration_models/logistic growth/mr0.1/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.1 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.015/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.015 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.01 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.005/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.005 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.0/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.0 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.02/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.02 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.03/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.03 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.04/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.04 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/logistic growth/mr0.07/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.07 <- rbindlist(migrationmodels.read, fill = T)
+```
+
+```{r}
+migrationmodel.log.0.0$migrate.rate <- 0
+migrationmodel.log.0.005$migrate.rate <- 0.005
+migrationmodel.log.0.01$migrate.rate <- 0.01
+migrationmodel.log.0.015$migrate.rate <- 0.015
+migrationmodel.log.0.1$migrate.rate <- 0.1
+migrationmodel.log.0.02$migrate.rate <- 0.02
+migrationmodel.log.0.03$migrate.rate <- 0.03
+migrationmodel.log.0.04$migrate.rate <- 0.04
+migrationmodel.log.0.07$migrate.rate <- 0.07
+
+
+
+migrationmodelcombine.log <- bind_rows(migrationmodel.log.0.0, migrationmodel.log.0.005, migrationmodel.log.0.01, migrationmodel.log.0.02,
+migrationmodel.log.0.03,
+migrationmodel.log.0.04,
+migrationmodel.log.0.015,
+migrationmodel.log.0.1,
+migrationmodel.log.0.07
+)
+
+
+
+# round cells
+
+migrationmodelcombine.log$cellspercluster <- round(migrationmodelcombine.log$cells)
+migrationmodelcombine.log <- subset(migrationmodelcombine.log, cellspercluster > 0)
+
+
+
+
+# Create breaks to divide groups
+
+
+breaks = seq(1,2000,1)
+breaks_names = seq(1,1999,1)
+```
+
+
+# Create frequency table
+```{r}
+
+migrationmodelcombine.log$migrate.rate <- as.factor(migrationmodelcombine.log$migrate.rate)
+
+migrationmodelcombine2.log <- migrationmodelcombine.log %>%
+group_by(sample.name, Subsample, end.day, migrate.rate) %>%
+  dplyr::summarize(cellspercluster = cellspercluster, histgroup = cut(cellspercluster, right = F, breaks = breaks, labels = breaks_names), freq = 1)
+
+```
+
+
+
+# turn frequency table into histogram summary table
+
+```{r}
+migrationmodel_sum.log <- migrationmodelcombine2.log %>%
+  group_by(sample.name, Subsample, end.day, migrate.rate, histgroup) %>%
+  dplyr::summarize(frequency = sum(freq))
+
+```
+
+```{r}
+arrange(migrationmodel_sum.log, histgroup)
+#df_lm_model_sum$histgroup <- paste("X",df_lm_model_sum$histgroup, sep = "")
+
+```
+# pivot to wide
+```{r}
+migrationmodel_sum_wide.log <- migrationmodel_sum.log %>% 
+    pivot_wider(names_from = histgroup, values_from = frequency, values_fill = 0, names_sort = T)
+
+
+colnames(migrationmodel_sum_wide.log) <- paste("X", colnames(migrationmodel_sum_wide.log), sep = "")
+
+migrationmodel_sum_wide.log <- dplyr::rename(migrationmodel_sum_wide.log, sample.name = Xsample.name)
+migrationmodel_sum_wide.log <- dplyr::rename(migrationmodel_sum_wide.log, Subsample = XSubsample)
+migrationmodel_sum_wide.log <- dplyr::rename(migrationmodel_sum_wide.log, end.day = Xend.day)
+migrationmodel_sum_wide.log <- dplyr::rename(migrationmodel_sum_wide.log, migrate.rate = Xmigrate.rate)
+
+migmodel.ncol <- length(migrationmodel_sum_wide.log)
+
+
+# create same groups as before
+migrationmodel_sum_wide.log$Xone <- migrationmodel_sum_wide.log$X1
+
+migrationmodel_sum_wide.log$Xtwo <- migrationmodel_sum_wide.log$X2
+
+migrationmodel_sum_wide.log$Xthreefour <- migrationmodel_sum_wide.log$X3 + migrationmodel_sum_wide.log$X4
+  
+
+migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>% ungroup %>%
+  
+  mutate(X3to4 = dplyr::select(., X3:X4) %>% rowSums(na.rm = TRUE))
+migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>%
+    mutate(X5to10 = dplyr::select(., X5:X10) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>%
+    mutate(X15to50 = dplyr::select(., X15:X50) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>%
+    mutate(Xover50 = dplyr::select(., X51:all_of(migmodel.ncol)) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>%
+    mutate(Xover10 = dplyr::select(., X11:all_of(migmodel.ncol)) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>%
+    mutate(hist_count = dplyr::select(., X1:all_of(migmodel.ncol)) %>% rowSums(na.rm = TRUE))
+```
+
+
+
+# hist sums
+
+```{r}
+migrationmodel_sum_wide.log %>% 
+dplyr::select(., X1:all_of(migmodel.ncol)) -> histnamesubset
+
+histnames <- as.numeric(unlist(str_extract_all(names(histnamesubset), '[0-9]+')))
+
+histsumsubset <- data.frame(mapply(`*`,histnamesubset,histnames))
+
+colnames(histsumsubset) <- paste(colnames(histsumsubset),"hist",sep="_")
+histsumsubset$hist_sum <- rowSums(histsumsubset)
+
+
+
+
+migrationmodel_sum_wide.log$hist_sum <- histsumsubset$hist_sum
+
+```
+
+
+
+# convert short to long df
+```{r}
+
+migrationmodel_log_pop_long <- reshape2::melt(migrationmodel_sum_wide.log,
+        # ID variables - all the variables to keep but not split apart on
+    id.vars=c(1:4),
+        # The source columns
+        # Name of the destination column that will identify the original
+        # column that the measurement came from
+    variable.name="cluster_type",
+    value.name="frequency"
+)
+
+
+```
+
+
+```{r}
+
+
+mm_log_migrate_one <- subset(migrationmodel_log_pop_long, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+mm_log_migrate_one$day <- mm_log_migrate_one$day_post_inoc
+```
+
+
+
+# clusts 26B
+```{r}
+clusts_26B_modelmerge <- subset(clusts_plus_long_bleach, treatment == "B26")
+clusts_26B_modelmerge <- subset(clusts_26B_modelmerge, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+```
+
+```{r}
+
+clusts_26B_modelmerge$end.day <- clusts_26B_modelmerge$day
+clusts_26B_modelmerge$migrate.rate <- "observed"
+clusts_26B_modelmerge$migrate.rate <- as.factor(clusts_26B_modelmerge$migrate.rate)
+
+#clusts_26B_modelmerge_hist$end.day <- clusts_26B_modelmerge_hist$day
+#clusts_26B_modelmerge_hist$migrate.rate <- "observed"
+#clusts_26B_modelmerge_hist$migrate.rate <- as.factor(clusts_26B_modelmerge_hist$migrate.rate)
+
+#clusts_26B_hist_modelmerge <- clusts_26B_hist
+#clusts_26B_hist_modelmerge$end.day <- clusts_26B_hist_modelmerge$day
+#clusts_26B_hist_modelmerge$migrate.rate <- "observed"
+#clusts_26B_hist_modelmerge$migrate.rate <- as.factor(clusts_26B_hist_modelmerge$migrate.rate)
+
+```
+
+#clusts 26B model merge
+```{r}
+
+mm_log_migrate_one.subset3 <- dplyr::filter(mm_log_migrate_one, migrate.rate == 0.0 | migrate.rate == 0.01 | migrate.rate == 0.02 |  migrate.rate == 0.015)
+
+mm_log_migrate_one.subset3 <- dplyr::filter(mm_log_migrate_one.subset3, cluster_type == "Xone" | cluster_type == "Xthreefour" | cluster_type == "Xover10")
+
+
+clusts_26B_modelmerge.subset3 <- dplyr::filter(clusts_26B_modelmerge, cluster_type == "Xone" | cluster_type == "Xthreefour" | cluster_type == "Xover10")
+
+
+```
+
+```{r}
+# New facet label names for migration
+cluster.labs <- c("Xone", "Xthreefour", "Xover10")
+names(cluster.labs) <- c("B", "C", "D")
+```
+
+
+
+
+
+```{r}
+fig5e <- ggplot(subset(migrationmodel_sum_wide.log, migrate.rate == 0.01),
+       aes(x=end.day, y=(hist_sum))) +
+  geom_boxplot(aes(group = end.day), fill = "peachpuff", color = "peachpuff4") +
+  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1293.9831, xmid = 16.6066, scal = 6.3934)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,70), ylim = c(-100,3000)) +
+  theme_linedraw() +
+  ylab("Total sum of clusters\n per sample image") +
+  xlab("Days post inoculation") +
+  facet_wrap(~ sample.name)
+
+fig5e
+
+```
+
+
+
+
+
+
+
+
+# subsets
+```{r}
+
+mm_log_migrate_one.subset3day <- mm_log_migrate_one[mm_log_migrate_one$end.day %in% c(4,7,9,11,14,16,18,21,25,29,31),]
+mm_log_migrate_one.subset3.0 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.0)
+mm_log_migrate_one.subset3.005 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.005)
+mm_log_migrate_one.subset3.01 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.01)
+mm_log_migrate_one.subset3.02 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.02)
+
+mm_log_migrate_one.subset3.03 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.03)
+mm_log_migrate_one.subset3.04 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.04)
+mm_log_migrate_one.subset3.015 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.015)
+mm_log_migrate_one.subset3.07 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.07)
+mm_log_migrate_one.subset3.1 <- subset(mm_log_migrate_one.subset3day, migrate.rate == 0.1)
+```
+
+
+
+## try promoting growth within smaller clusters and slowing growth in larger clusters
+
+
+
+# Break initial day into new clusters for day 7 growth, apply growth rate to match observed linear model
+# Function
+
+```{r migrate cluster logistic function}
+##_______
+# Warning: returns "output.df" to Global Environment
+
+# inputs needed:
+# input data with a column for $sample and $size
+# migration rate i.e. probability of any cell to migrate
+# initial day
+# final day
+
+migrate.cluster.log.sqrt <- function(input.df, migration.rate, initial.day, final.day, subsample) {
+
+# input.df needs to contain columns titled 'sample', 'size'
+  
+# set up empty data frames  
+df.final = data.frame()
+df.temp = data.frame()
+start.day <- initial.day
+end.day <- final.day
+migrate.rate <- migration.rate
+subsample <- subsample
+
+# for loop to calculate amount of migration from each cluster
+for(i in 1:nrow(input.df)) {
+  
+  # variable selection
+  sample.name <- input.df$sample[i]
+  start.cells <- input.df$cells[i]
+  asymp <- input.df$asymptote[i]
+  midp <- input.df$midpoint[i]
+  sca <- input.df$scale[i]
+  
+
+  # variable classification
+  sample.name <- as.character(sample.name)
+  start.cells <- as.numeric(start.cells)
+  start.day <- as.numeric(start.day)
+  end.day <- as.numeric(end.day)
+  asymp <- as.numeric(asymp)
+  midp <- as.numeric(midp)
+  sca <- as.numeric(sca)
+  
+  if(start.day  <  end.day) {
+    
+# apply migration probability
+# returns a binary vector of which cells have migrated
+
+bern.trial <- rbinom(start.cells,1,migrate.rate)
+
+# randomize singlet sizes within size distribution of singlets
+size.randomizer <- runif(start.cells,min=1, max=1.49)    
+
+# apply sizes to migrating cells
+migrate.vector <- bern.trial * size.randomizer
+
+# define new size of original cluster
+end.size.vector <- start.cells - sum(migrate.vector)
+
+
+# generate list of newly migrated clusters and original cluster
+
+if(end.size.vector > 0 && sum(migrate.vector) > 0){
+  migrate.vector.select <- migrate.vector[migrate.vector > 0.9]
+  new.cells <- c(migrate.vector.select, end.size.vector)
+  did.it.migrate <- "Yes"
+  # create temporary df for new sizes
+  df.temp <- data.frame(sample.name, start.day, end.day, new.cells, did.it.migrate, asymp, midp, sca)
+  # append temporary df to summary df containing clusters for entire sample
+  df.final <- bind_rows(df.final,df.temp)
+  
+} else{
+  # original cluster size continues to exist without migration event
+  new.cells <- c(start.cells)
+  did.it.migrate <- "No"
+  # create temporary df for original cluster
+  df.temp <- data.frame(sample.name, start.day, end.day, new.cells, did.it.migrate, asymp, midp, sca)
+  # append temporary df to summary df containing clusters for entire sample
+  df.final <- bind_rows(df.final,df.temp)
+} 
+
+} else{
+    # not enough time has passed, return the same list of objects as input
+    new.cells <- c(start.cells)
+    did.it.migrate <- "No"
+    # create temporary df for original cluster
+    df.temp <- data.frame(sample.name, start.day, end.day, new.cells, did.it.migrate, asymp, midp, sca)
+    # append temporary df to summary df containing clusters for entire sample
+    df.final <- bind_rows(df.final,df.temp)
+    }  
+  }
+
+# optional summary check to console before applying growth rate
+print("post-migration: input and output cell sum total should be equal")
+print(sum(input.df$cells))
+print(sum(df.final$new.cells))
+print("output cluster number should increase")
+print(nrow(input.df))
+print(nrow(df.final))
+
+
+# applying growth rate
+# lm general to all, not specific to each sample
+# take generated size distributions and add growth rate to form new clusters sizes
+#d7_final_lm <- df.final
+
+#write.csv(df.final, file = paste("migrate", migrate.rate, start.day, end.day, "postmigration.csv", sep = "-"))
+
+# add columns to df.final: total cluster number, 
+
+# hist sum and asym model are in total cells
+# newsizes are not cut yet
+
+output.df <- data.frame()
+
+if(start.day  <  end.day) {
+df.final %>% 
+  group_by(end.day, sample.name) %>% 
+  mutate(sample = sample.name,
+         start.sum = sum(new.cells),
+         model.start.sum = (asymp/(1+exp((midp - start.day)/sca))),
+         model.end.sum = (asymp/(1+exp((midp - end.day)/sca))),
+         pop.growth = model.end.sum - start.sum,
+         perc.clust = new.cells / start.sum,
+         
+         tsqrt = (new.cells)^(1/4),
+         tsqrtnorm = tsqrt/sum(tsqrt),
+         
+         cells = new.cells + (pop.growth)*tsqrtnorm,
+         asymptote = asymp,
+         midpoint = midp,
+         scale = sca,
+         Subsample = subsample
+         ) -> output.df
+
+# SSlogis vector output = Asym/(1+exp((xmid-input)/scal))
+  #y ~ SSlogis(log(x), Asym, xmid, scal),
+#              se = FALSE,
+#              method.args = list(start = list(Asym = 2750.5520, xmid = # 3.6170, scal = 0.6951)
+write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
+
+} else{
+  df.final %>% 
+  group_by(end.day, sample.name) %>% 
+  mutate(sample = sample.name,
+         start.sum = sum(new.cells),
+         model.start.sum = (asymp/(1+exp((midp - start.day)/sca))),
+         model.end.sum = (asymp/(1+exp((midp - end.day)/sca))),
+         pop.growth = model.end.sum - start.sum,
+         perc.clust = new.cells / start.sum,
+         
+         tsqrt = (new.cells)^(1/4),
+         tsqrtnorm = tsqrt/sum(tsqrt),
+         
+         cells = new.cells + (pop.growth)*tsqrtnorm,
+         asymptote = asymp,
+         midpoint = midp,
+         scale = sca,
+         Subsample = subsample
+         ) -> output.df
+  
+
+  
+  
+  
+# SSlogis vector output = Asym/(1+exp((xmid-input)/scal))
+  #y ~ SSlogis(log(x), Asym, xmid, scal),
+#              se = FALSE,
+#              method.args = list(start = list(Asym = 2750.5520, xmid = # 3.6170, scal = 0.6951)
+write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
+}
+
+print("post-growth: output cell sum total should increase")
+print(sum(df.final$new.cells))
+print(sum(output.df$cells))
+print("input and output cluster number should be equal")
+print(nrow(output.df))
+print(nrow(output.df))
+
+print("next day input file is output.df, which is saved as ... ")
+print(paste(migration.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
+
+# return output.df to Global environment for next input
+assign("output.df", output.df, envir=.GlobalEnv)
+return(output.df)
+
+}
+
+```
+
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/sqrt/mr0.1/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.1,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.1,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.1,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.1,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.1,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.1,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.1,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.1,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.1,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.1,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.1,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.1,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.1,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.1,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.1,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.1,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.1,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.1,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.1,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.1,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.1,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.1,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.1,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.1,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.1,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.1,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.1,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.1,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.1,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.1,32,33,1)
+
+```
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/sqrt/mr0.1/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.1,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.1,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.1,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.1,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.1,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.1,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.1,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.1,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.1,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.1,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.1,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.1,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.1,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.1,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.1,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.1,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.1,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.1,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.1,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.1,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.1,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.1,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.1,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.1,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.1,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.1,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.1,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.1,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.1,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.1,32,33,2)
+
+```
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/sqrt/mr0.1/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.1,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.1,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.1,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.1,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.1,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.1,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.1,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.1,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.1,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.1,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.1,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.1,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.1,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.1,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.1,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.1,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.1,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.1,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.1,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.1,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.1,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.1,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.1,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.1,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.1,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.1,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.1,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.1,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.1,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.1,32,33,3)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.015/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.015,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.015,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.015,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.015,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.015,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.015,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.015,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.015,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.015,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.015,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.015,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.015,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.015,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.015,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.015,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.015,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.015,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.015,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.015,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.015,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.015,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.015,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.015,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.015,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.015,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.015,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.015,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.015,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.015,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.015,32,33,1)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.015/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.015,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.015,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.015,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.015,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.015,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.015,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.015,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.015,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.015,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.015,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.015,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.015,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.015,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.015,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.015,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.015,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.015,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.015,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.015,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.015,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.015,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.015,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.015,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.015,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.015,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.015,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.015,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.015,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.015,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.015,32,33,2)
+
+```
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.015/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.015,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.015,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.015,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.015,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.015,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.015,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.015,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.015,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.015,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.015,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.015,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.015,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.015,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.015,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.015,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.015,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.015,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.015,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.015,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.015,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.015,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.015,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.015,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.015,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.015,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.015,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.015,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.015,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.015,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.015,32,33,3)
+
+```
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.01/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.01,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.01,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.01,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.01,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.01,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.01,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.01,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.01,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.01,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.01,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.01,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.01,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.01,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.01,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.01,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.01,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.01,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.01,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.01,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.01,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.01,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.01,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.01,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.01,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.01,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.01,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.01,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.01,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.01,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.01,32,33,1)
+
+```
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.01/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.01,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.01,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.01,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.01,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.01,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.01,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.01,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.01,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.01,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.01,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.01,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.01,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.01,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.01,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.01,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.01,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.01,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.01,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.01,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.01,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.01,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.01,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.01,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.01,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.01,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.01,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.01,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.01,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.01,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.01,32,33,2)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.01/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.01,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.01,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.01,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.01,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.01,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.01,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.01,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.01,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.01,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.01,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.01,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.01,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.01,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.01,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.01,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.01,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.01,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.01,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.01,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.01,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.01,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.01,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.01,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.01,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.01,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.01,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.01,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.01,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.01,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.01,32,33,3)
+
+```
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.02/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.02,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.02,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.02,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.02,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.02,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.02,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.02,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.02,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.02,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.02,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.02,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.02,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.02,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.02,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.02,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.02,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.02,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.02,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.02,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.02,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.02,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.02,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.02,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.02,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.02,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.02,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.02,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.02,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.02,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.02,32,33,1)
+
+```
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.02/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.02,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.02,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.02,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.02,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.02,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.02,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.02,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.02,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.02,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.02,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.02,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.02,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.02,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.02,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.02,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.02,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.02,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.02,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.02,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.02,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.02,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.02,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.02,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.02,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.02,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.02,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.02,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.02,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.02,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.02,32,33,2)
+
+```
+
+
+
+
+```{r, include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.02/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.02,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.02,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.02,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.02,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.02,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.02,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.02,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.02,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.02,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.02,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.02,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.02,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.02,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.02,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.02,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.02,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.02,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.02,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.02,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.02,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.02,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.02,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.02,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.02,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.02,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.02,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.02,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.02,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.02,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.02,32,33,3)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.03/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.03,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.03,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.03,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.03,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.03,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.03,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.03,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.03,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.03,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.03,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.03,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.03,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.03,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.03,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.03,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.03,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.03,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.03,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.03,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.03,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.03,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.03,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.03,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.03,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.03,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.03,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.03,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.03,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.03,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.03,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.03/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.03,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.03,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.03,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.03,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.03,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.03,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.03,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.03,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.03,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.03,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.03,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.03,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.03,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.03,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.03,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.03,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.03,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.03,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.03,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.03,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.03,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.03,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.03,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.03,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.03,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.03,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.03,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.03,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.03,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.03,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.03/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.03,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.03,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.03,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.03,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.03,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.03,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.03,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.03,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.03,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.03,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.03,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.03,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.03,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.03,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.03,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.03,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.03,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.03,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.03,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.03,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.03,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.03,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.03,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.03,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.03,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.03,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.03,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.03,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.03,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.03,32,33,3)
+
+```
+
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.04/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.04,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.04,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.04,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.04,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.04,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.04,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.04,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.04,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.04,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.04,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.04,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.04,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.04,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.04,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.04,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.04,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.04,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.04,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.04,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.04,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.04,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.04,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.04,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.04,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.04,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.04,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.04,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.04,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.04,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.04,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.04/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.04,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.04,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.04,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.04,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.04,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.04,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.04,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.04,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.04,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.04,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.04,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.04,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.04,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.04,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.04,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.04,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.04,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.04,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.04,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.04,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.04,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.04,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.04,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.04,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.04,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.04,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.04,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.04,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.04,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.04,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.04/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.04,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.04,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.04,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.04,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.04,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.04,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.04,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.04,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.04,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.04,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.04,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.04,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.04,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.04,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.04,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.04,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.04,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.04,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.04,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.04,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.04,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.04,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.04,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.04,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.04,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.04,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.04,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.04,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.04,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.04,32,33,3)
+
+```
+
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.0/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.0,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.0,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.0,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.0,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.0,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.0,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.0,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.0,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.0,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.0,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.0,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.0,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.0,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.0,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.0,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.0,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.0,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.0,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.0,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.0,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.0,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.0,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.0,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.0,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.0,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.0,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.0,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.0,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.0,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.0/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.0,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.0,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.0,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.0,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.0,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.0,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.0,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.0,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.0,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.0,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.0,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.0,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.0,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.0,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.0,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.0,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.0,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.0,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.0,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.0,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.0,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.0,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.0,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.0,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.0,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.0,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.0,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.0,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.0,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.0/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.0,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.0,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.0,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.0,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.0,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.0,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.0,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.0,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.0,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.0,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.0,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.0,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.0,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.0,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.0,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.0,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.0,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.0,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.0,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.0,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.0,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.0,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.0,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.0,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.0,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.0,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.0,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.0,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.0,32,33,3)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.005/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.005,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.005,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.005,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.005,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.005,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.005,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.005,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.005,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.005,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.005,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.005,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.005,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.005,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.005,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.005,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.005,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.005,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.005,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.005,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.005,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.005,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.005,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.005,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.005,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.005,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.005,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.005,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.005,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.005,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.005,32,33,1)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.005/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.005,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.005,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.005,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.005,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.005,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.005,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.005,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.005,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.005,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.005,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.005,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.005,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.005,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.005,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.005,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.005,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.005,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.005,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.005,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.005,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.005,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.005,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.005,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.005,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.005,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.005,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.005,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.005,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.005,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.005,32,33,2)
+
+```
+
+
+```{r,include=FALSE, results= FALSE}
+setwd("./summarycsv/migration_models/sqrt/mr0.005/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.005,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.005,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.005,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.005,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.005,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.005,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.005,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.005,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.005,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.005,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.005,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.005,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.005,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.005,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.005,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.005,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.005,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.005,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.005,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.005,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.005,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.005,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.005,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.005,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.005,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.005,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.005,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.005,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.005,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.005,32,33,3)
+
+```
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/sqrt/mr0.07/")
+migrate.cluster.log.sqrt(cluster_sample_data_1,0.07,4,4,1)
+migrate.cluster.log.sqrt(output.df,0.07,4,5,1)
+migrate.cluster.log.sqrt(output.df,0.07,5,6,1)
+migrate.cluster.log.sqrt(output.df,0.07,6,7,1)
+migrate.cluster.log.sqrt(output.df,0.07,7,8,1)
+migrate.cluster.log.sqrt(output.df,0.07,8,9,1)
+migrate.cluster.log.sqrt(output.df,0.07,9,10,1)
+migrate.cluster.log.sqrt(output.df,0.07,10,11,1)
+migrate.cluster.log.sqrt(output.df,0.07,11,12,1)
+migrate.cluster.log.sqrt(output.df,0.07,12,13,1)
+migrate.cluster.log.sqrt(output.df,0.07,13,14,1)
+migrate.cluster.log.sqrt(output.df,0.07,14,15,1)
+migrate.cluster.log.sqrt(output.df,0.07,15,16,1)
+migrate.cluster.log.sqrt(output.df,0.07,16,17,1)
+migrate.cluster.log.sqrt(output.df,0.07,17,18,1)
+migrate.cluster.log.sqrt(output.df,0.07,18,19,1)
+migrate.cluster.log.sqrt(output.df,0.07,19,20,1)
+migrate.cluster.log.sqrt(output.df,0.07,20,21,1)
+migrate.cluster.log.sqrt(output.df,0.07,21,22,1)
+migrate.cluster.log.sqrt(output.df,0.07,22,23,1)
+migrate.cluster.log.sqrt(output.df,0.07,23,24,1)
+migrate.cluster.log.sqrt(output.df,0.07,24,25,1)
+migrate.cluster.log.sqrt(output.df,0.07,25,26,1)
+migrate.cluster.log.sqrt(output.df,0.07,26,27,1)
+migrate.cluster.log.sqrt(output.df,0.07,27,28,1)
+migrate.cluster.log.sqrt(output.df,0.07,28,29,1)
+migrate.cluster.log.sqrt(output.df,0.07,29,30,1)
+migrate.cluster.log.sqrt(output.df,0.07,30,31,1)
+migrate.cluster.log.sqrt(output.df,0.07,31,32,1)
+migrate.cluster.log.sqrt(output.df,0.07,32,33,1)
+
+```
+
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/sqrt/mr0.07/")
+migrate.cluster.log.sqrt(cluster_sample_data_2,0.07,4,4,2)
+migrate.cluster.log.sqrt(output.df,0.07,4,5,2)
+migrate.cluster.log.sqrt(output.df,0.07,5,6,2)
+migrate.cluster.log.sqrt(output.df,0.07,6,7,2)
+migrate.cluster.log.sqrt(output.df,0.07,7,8,2)
+migrate.cluster.log.sqrt(output.df,0.07,8,9,2)
+migrate.cluster.log.sqrt(output.df,0.07,9,10,2)
+migrate.cluster.log.sqrt(output.df,0.07,10,11,2)
+migrate.cluster.log.sqrt(output.df,0.07,11,12,2)
+migrate.cluster.log.sqrt(output.df,0.07,12,13,2)
+migrate.cluster.log.sqrt(output.df,0.07,13,14,2)
+migrate.cluster.log.sqrt(output.df,0.07,14,15,2)
+migrate.cluster.log.sqrt(output.df,0.07,15,16,2)
+migrate.cluster.log.sqrt(output.df,0.07,16,17,2)
+migrate.cluster.log.sqrt(output.df,0.07,17,18,2)
+migrate.cluster.log.sqrt(output.df,0.07,18,19,2)
+migrate.cluster.log.sqrt(output.df,0.07,19,20,2)
+migrate.cluster.log.sqrt(output.df,0.07,20,21,2)
+migrate.cluster.log.sqrt(output.df,0.07,21,22,2)
+migrate.cluster.log.sqrt(output.df,0.07,22,23,2)
+migrate.cluster.log.sqrt(output.df,0.07,23,24,2)
+migrate.cluster.log.sqrt(output.df,0.07,24,25,2)
+migrate.cluster.log.sqrt(output.df,0.07,25,26,2)
+migrate.cluster.log.sqrt(output.df,0.07,26,27,2)
+migrate.cluster.log.sqrt(output.df,0.07,27,28,2)
+migrate.cluster.log.sqrt(output.df,0.07,28,29,2)
+migrate.cluster.log.sqrt(output.df,0.07,29,30,2)
+migrate.cluster.log.sqrt(output.df,0.07,30,31,2)
+migrate.cluster.log.sqrt(output.df,0.07,31,32,2)
+migrate.cluster.log.sqrt(output.df,0.07,32,33,2)
+
+```
+
+
+```{r, echo = F, include = F, results = F}
+setwd("./summarycsv/migration_models/sqrt/mr0.07/")
+migrate.cluster.log.sqrt(cluster_sample_data_3,0.07,4,4,3)
+migrate.cluster.log.sqrt(output.df,0.07,4,5,3)
+migrate.cluster.log.sqrt(output.df,0.07,5,6,3)
+migrate.cluster.log.sqrt(output.df,0.07,6,7,3)
+migrate.cluster.log.sqrt(output.df,0.07,7,8,3)
+migrate.cluster.log.sqrt(output.df,0.07,8,9,3)
+migrate.cluster.log.sqrt(output.df,0.07,9,10,3)
+migrate.cluster.log.sqrt(output.df,0.07,10,11,3)
+migrate.cluster.log.sqrt(output.df,0.07,11,12,3)
+migrate.cluster.log.sqrt(output.df,0.07,12,13,3)
+migrate.cluster.log.sqrt(output.df,0.07,13,14,3)
+migrate.cluster.log.sqrt(output.df,0.07,14,15,3)
+migrate.cluster.log.sqrt(output.df,0.07,15,16,3)
+migrate.cluster.log.sqrt(output.df,0.07,16,17,3)
+migrate.cluster.log.sqrt(output.df,0.07,17,18,3)
+migrate.cluster.log.sqrt(output.df,0.07,18,19,3)
+migrate.cluster.log.sqrt(output.df,0.07,19,20,3)
+migrate.cluster.log.sqrt(output.df,0.07,20,21,3)
+migrate.cluster.log.sqrt(output.df,0.07,21,22,3)
+migrate.cluster.log.sqrt(output.df,0.07,22,23,3)
+migrate.cluster.log.sqrt(output.df,0.07,23,24,3)
+migrate.cluster.log.sqrt(output.df,0.07,24,25,3)
+migrate.cluster.log.sqrt(output.df,0.07,25,26,3)
+migrate.cluster.log.sqrt(output.df,0.07,26,27,3)
+migrate.cluster.log.sqrt(output.df,0.07,27,28,3)
+migrate.cluster.log.sqrt(output.df,0.07,28,29,3)
+migrate.cluster.log.sqrt(output.df,0.07,29,30,3)
+migrate.cluster.log.sqrt(output.df,0.07,30,31,3)
+migrate.cluster.log.sqrt(output.df,0.07,31,32,3)
+migrate.cluster.log.sqrt(output.df,0.07,32,33,3)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Start here
+```{r}
+setwd("./summarycsv/migration_models/sqrt/mr0.1/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.1 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.015/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.015 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.01/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.01 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.005/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.005 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.0/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.0 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.02/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.02 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.03/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.03 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.04/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.04 <- rbindlist(migrationmodels.read, fill = T)
+
+setwd("./summarycsv/migration_models/sqrt/mr0.07/")
+migrationmodels.list = list.files(pattern = ".csv")
+migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
+migrationmodel.log.0.07 <- rbindlist(migrationmodels.read, fill = T)
+```
+
+```{r}
+migrationmodel.log.0.0$migrate.rate <- 0
+migrationmodel.log.0.005$migrate.rate <- 0.005
+migrationmodel.log.0.01$migrate.rate <- 0.01
+migrationmodel.log.0.015$migrate.rate <- 0.015
+migrationmodel.log.0.1$migrate.rate <- 0.1
+migrationmodel.log.0.02$migrate.rate <- 0.02
+migrationmodel.log.0.03$migrate.rate <- 0.03
+migrationmodel.log.0.04$migrate.rate <- 0.04
+migrationmodel.log.0.07$migrate.rate <- 0.07
+
+
+
+migrationmodelcombine.log.sqrt <- bind_rows(migrationmodel.log.0.0, migrationmodel.log.0.005, migrationmodel.log.0.01, migrationmodel.log.0.02,
+migrationmodel.log.0.03,
+migrationmodel.log.0.04,
+migrationmodel.log.0.015,
+)
+
+
+
+# round cells
+
+migrationmodelcombine.log.sqrt$cellspercluster <- round(migrationmodelcombine.log.sqrt$cells)
+migrationmodelcombine.log.sqrt <- subset(migrationmodelcombine.log.sqrt, cellspercluster > 0)
+
+
+
+
+# Create breaks to divide groups
+
+
+breaks = seq(1,2000,1)
+breaks_names = seq(1,1999,1)
+
+
+
+# Create frequency table
+
+
+migrationmodelcombine.log.sqrt$migrate.rate <- as.factor(migrationmodelcombine.log.sqrt$migrate.rate)
+
+migrationmodelcombine2.log.sqrt <- migrationmodelcombine.log.sqrt %>%
+group_by(sample.name, Subsample, end.day, migrate.rate) %>%
+  dplyr::summarize(cellspercluster = cellspercluster, histgroup = cut(cellspercluster, right = F, breaks = breaks, labels = breaks_names), freq = 1)
+
+```
+
+
+
+# turn frequency table into histogram summary table
+
+```{r}
+migrationmodel_sum.log.sqrt <- migrationmodelcombine2.log.sqrt %>%
+  group_by(sample.name, Subsample, end.day, migrate.rate, histgroup) %>%
+  dplyr::summarize(frequency = sum(freq))
+
+```
+
+```{r}
+arrange(migrationmodel_sum.log.sqrt, histgroup)
+#df_lm_model_sum$histgroup <- paste("X",df_lm_model_sum$histgroup, sep = "")
+
+```
+# pivot to wide
+```{r}
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum.log.sqrt %>% 
+    pivot_wider(names_from = histgroup, values_from = frequency, values_fill = 0, names_sort = T)
+
+
+colnames(migrationmodel_sum_wide.log.sqrt) <- paste("X", colnames(migrationmodel_sum_wide.log.sqrt), sep = "")
+
+migrationmodel_sum_wide.log.sqrt <- dplyr::rename(migrationmodel_sum_wide.log.sqrt, sample.name = Xsample.name)
+migrationmodel_sum_wide.log.sqrt <- dplyr::rename(migrationmodel_sum_wide.log.sqrt, Subsample = XSubsample)
+migrationmodel_sum_wide.log.sqrt <- dplyr::rename(migrationmodel_sum_wide.log.sqrt, end.day = Xend.day)
+migrationmodel_sum_wide.log.sqrt <- dplyr::rename(migrationmodel_sum_wide.log.sqrt, migrate.rate = Xmigrate.rate)
+
+migmodel.ncol <- length(migrationmodel_sum_wide.log.sqrt)
+
+
+# create same groups as before
+migrationmodel_sum_wide.log.sqrt$Xone <- migrationmodel_sum_wide.log.sqrt$X1
+
+migrationmodel_sum_wide.log.sqrt$Xtwo <- migrationmodel_sum_wide.log.sqrt$X2
+
+migrationmodel_sum_wide.log.sqrt$Xthreefour <- migrationmodel_sum_wide.log.sqrt$X3 + migrationmodel_sum_wide.log.sqrt$X4
+  
+
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>% ungroup %>%
+  
+  mutate(X3to4 = dplyr::select(., X3:X4) %>% rowSums(na.rm = TRUE))
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>%
+    mutate(X5to10 = dplyr::select(., X5:X10) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>%
+    mutate(X15to50 = dplyr::select(., X15:X50) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>%
+    mutate(Xover50 = dplyr::select(., X51:all_of(migmodel.ncol)) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>%
+    mutate(Xover10 = dplyr::select(., X11:all_of(migmodel.ncol)) %>% rowSums(na.rm = TRUE))
+
+migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>%
+    mutate(hist_count = dplyr::select(., X1:all_of(migmodel.ncol)) %>% rowSums(na.rm = TRUE))
+```
+
+
+
+# hist sums
+
+```{r}
+migrationmodel_sum_wide.log.sqrt %>% 
+dplyr::select(., X1:all_of(migmodel.ncol)) -> histnamesubset
+
+histnames <- as.numeric(unlist(str_extract_all(names(histnamesubset), '[0-9]+')))
+
+histsumsubset <- data.frame(mapply(`*`,histnamesubset,histnames))
+
+colnames(histsumsubset) <- paste(colnames(histsumsubset),"hist",sep="_")
+histsumsubset$hist_sum <- rowSums(histsumsubset)
+
+
+
+
+migrationmodel_sum_wide.log.sqrt$hist_sum <- histsumsubset$hist_sum
+
+```
+
+
+
+# convert short to long df
+```{r}
+
+migrationmodel_log_pop_long.sqrt <- reshape2::melt(migrationmodel_sum_wide.log.sqrt,
+        # ID variables - all the variables to keep but not split apart on
+    id.vars=c(1:4),
+        # The source columns
+        # Name of the destination column that will identify the original
+        # column that the measurement came from
+    variable.name="cluster_type",
+    value.name="frequency"
+)
+
+
+
+
+mm_log_migrate_one.sqrt <- subset(migrationmodel_log_pop_long.sqrt, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+mm_log_migrate_one.sqrt$day <- mm_log_migrate_one.sqrt$day_post_inoc
+```
+
+
+
+# clusts 26B
+```{r}
+clusts_26B_modelmerge <- subset(clusts_plus_long_bleach, treatment == "B26")
+clusts_26B_modelmerge <- subset(clusts_26B_modelmerge, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
+
+
+
+clusts_26B_modelmerge$end.day <- clusts_26B_modelmerge$day
+clusts_26B_modelmerge$migrate.rate <- "observed"
+clusts_26B_modelmerge$migrate.rate <- as.factor(clusts_26B_modelmerge$migrate.rate)
+
+#clusts_26B_modelmerge_hist$end.day <- clusts_26B_modelmerge_hist$day
+#clusts_26B_modelmerge_hist$migrate.rate <- "observed"
+#clusts_26B_modelmerge_hist$migrate.rate <- as.factor(clusts_26B_modelmerge_hist$migrate.rate)
+
+#clusts_26B_hist_modelmerge <- clusts_26B_hist
+#clusts_26B_hist_modelmerge$end.day <- clusts_26B_hist_modelmerge$day
+#clusts_26B_hist_modelmerge$migrate.rate <- "observed"
+#clusts_26B_hist_modelmerge$migrate.rate <- as.factor(clusts_26B_hist_modelmerge$migrate.rate)
+
+```
+
+#clusts 26B model merge
+```{r}
+
+mm_log_migrate_one.sqrt.subset3 <- dplyr::filter(mm_log_migrate_one.sqrt, migrate.rate == 0.0 | migrate.rate == 0.01 | migrate.rate == 0.02 |  migrate.rate == 0.015)
+
+mm_log_migrate_one.sqrt.subset3 <- dplyr::filter(mm_log_migrate_one.sqrt.subset3, cluster_type == "Xone" | cluster_type == "Xthreefour" | cluster_type == "Xover10")
+
+
+clusts_26B_modelmerge.subset3 <- dplyr::filter(clusts_26B_modelmerge, cluster_type == "Xone" | cluster_type == "Xthreefour" | cluster_type == "Xover10")
+
+
+
+# New facet label names for migration
+cluster.labs <- c("Xone", "Xthreefour", "Xover10")
+names(cluster.labs) <- c("B", "C", "D")
+```
+
+
+
+
+
+```{r}
+fig5b_facet <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0.01),
+       aes(x=end.day, y=(hist_sum))) +
+  geom_boxplot(aes(group = end.day), fill = "peachpuff", color = "peachpuff4") +
+  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
+  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1293.9831, xmid = 16.6066, scal = 6.3934)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,70), ylim = c(-100,3000)) +
+  theme_linedraw() +
+  ylab("Total sum of clusters\n per sample image") +
+  xlab("Days post inoculation") +
+  facet_wrap(~ sample.name)
+
+fig5b_facet
+```
+
+```{r}
+fig5b <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0.015 & end.day %in% c(4,7,9,11,14,16,18,21,25,29,31)),
+       aes(x=end.day, y=(hist_sum))) +
+  geom_boxplot(aes(group = end.day), fill = "peachpuff", color = "peachpuff4") +
+  stat_smooth(method = "nls",
+              formula = y ~ SSlogis(x, Asym, xmid, scal),
+              se = FALSE,
+              method.args = list(start = list(Asym = 1293.9831, xmid = 16.6066, scal = 6.3934)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
+  scale_x_continuous(limits = c(0,100)) +
+  coord_cartesian(xlim = c(0,35), ylim = c(-100,2500)) +
+  theme_linedraw() +
+  ylab("Total sum of cells\n per sample image") +
+  xlab("Days post inoculation")
+
+fig5b
+```
+
+
+
+
+
+
+
+
+# subsets
+```{r}
+
+mm_log_migrate_one.subset3day.sqrt <- mm_log_migrate_one.sqrt[mm_log_migrate_one.sqrt$end.day %in% c(4,7,9,11,14,16,18,21,25,29,31),]
+mm_log_migrate_one.subset3.0.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.0)
+mm_log_migrate_one.subset3.005.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.005)
+mm_log_migrate_one.subset3.01.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.01)
+mm_log_migrate_one.subset3.02.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.02)
+
+mm_log_migrate_one.subset3.03.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.03)
+mm_log_migrate_one.subset3.04.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.04)
+mm_log_migrate_one.subset3.015.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.015)
+mm_log_migrate_one.subset3.07.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.07)
+mm_log_migrate_one.subset3.1.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, migrate.rate == 0.1)
+```
+
+
+
+
+
+
+
+# newplot final log(x) v x
+```{r}
+newplot0.01 <- ggplot(mm_log_migrate_one.subset3.01,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.01
+
+newplot0.01.sqrt <- ggplot(mm_log_migrate_one.subset3.01.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.01.sqrt
+```
+
+
+```{r}
+newplot0.0.sqrt <- ggplot(mm_log_migrate_one.subset3.0.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.0.sqrt
+```
+```{r}
+newplot0.005 <- ggplot(mm_log_migrate_one.subset3.005,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.005
+
+newplot0.005.sqrt <- ggplot(mm_log_migrate_one.subset3.005.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.005.sqrt
+```
+
+```{r}
+newplot0.05 <- ggplot(mm_log_migrate_one.subset3.05,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.05
+
+newplot0.05.sqrt <- ggplot(mm_log_migrate_one.subset3.05.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.05.sqrt
+```
+
+```{r}
+newplot0.02 <- ggplot(mm_log_migrate_one.subset3.02,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.02
+
+newplot0.02.sqrt <- ggplot(mm_log_migrate_one.subset3.02.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.02.sqrt
+```
+```{r}
+newplot0.03 <- ggplot(mm_log_migrate_one.subset3.03,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.03
+
+newplot0.03.sqrt <- ggplot(mm_log_migrate_one.subset3.03.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.03.sqrt
+```
+
+
+
+
+```{r}
+newplot_obs <- ggplot(clusts_26B_modelmerge,aes(x=end.day,y=frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,120)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot_obs
+```
+
+
+```{r}
+newplot0.015 <- ggplot(mm_log_migrate_one.subset3.015,aes(x=end.day,y=frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,120)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.015
+```
+
+```{r}
+newplot0.015.sqrt <- ggplot(mm_log_migrate_one.subset3.015.sqrt,aes(x=end.day,y=frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,120)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.015.sqrt
+```
+
+```{r}
+newplot0.0 <- ggplot(mm_log_migrate_one.subset3.0,aes(x=end.day,y=frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,150)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+
+newplot0.0
+```
+
+```{r}
+newplot0.0 <- ggplot(mm_log_migrate_one.subset3.0,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters      \n per image-stack     ") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-25,95)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(82), label='underline("observed population growth (26˚C)")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-29), label='underline("population growth without migration")', parse = T, hjust=0, vjust=0) 
+
+newplot0.0
+```
+```{r}
+newplot0.015comp <- ggplot(mm_log_migrate_one.subset3.015,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
+  stat_summary(data = mm_log_migrate_one.subset3.015.sqrt, mapping = aes(x=end.day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(data = mm_log_migrate_one.subset3.015.sqrt, mapping = aes(x=end.day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
+  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-110,92)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
+  annotate("text", x = c(2), y = c(80), label='underline("cluster density-dependent growth rate")', parse = T, hjust=0, vjust=0) +
+  annotate("text", x = c(2), y = c(-115), label='underline("uniform growth rate")', parse = T, hjust=0, vjust=0) +
+  xlab("Days post inoculation")
+
+newplot0.015comp
+```
+
+
+
+# end figure:
+# figure 5A, 5B
+```{r}
+library(ggpubr)
+plot_figure_5_part1 <- ggarrange( 
+                           fig5a, 
+                           fig5b,
+                       labels = c("A","B"),
+                       ncol = 1, nrow = 2, common.legend = TRUE, 
+                       legend = "none", heights = c(1,1))
+plot_figure_5_part1
+
+```
+
+```{r}
+plot_figure_5_part2 <- ggarrange( 
+                           newplot0.0, 
+                           NULL,
+                           newplot0.015comp,
+                           NULL,
+                       labels = c("C","","D",""),
+                       ncol = 1, nrow = 4, 
+                       common.legend = TRUE, 
+                       legend = "bottom",
+                       heights = c(1.33,-0.1,2,0))
+plot_figure_5_part2
+
+#ggsave("plot_26_32_abd_clusts3.png", height = 12, width = 8.67)
+
+```
+
+```{r}
+plot_figure_5_whole <- ggarrange( 
+                           plot_figure_5_part1, 
+                           plot_figure_5_part2,
+                       labels = c("",""),
+                       ncol = 2, nrow = 1, common.legend = FALSE, 
+                       legend = "none", heights = c(1,1),
+                       widths = c(1,2))
+plot_figure_5_whole
+ggsave("plot_figure_5_whole.png", height = 5.5, width = 8.67)
+```
+
+
