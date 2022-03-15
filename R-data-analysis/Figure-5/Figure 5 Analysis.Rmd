@@ -16,6 +16,8 @@ library(data.table)
 ```
 
 
+# Observed Data
+
 ## summarize obj_count_combined to get total cluster number, total cluster volume, total cluster size, by name
 ```{r}
 setwd("./summarycsv/")
@@ -57,7 +59,7 @@ clusts_plus_bleach <- clusts_plus_bleach %>%
 ```
 
 
-# Counting total clusters
+## Counting total clusters
 ```{r}
 clusts_plus_bleach <- clusts_plus_bleach %>%
     mutate(X_50_100 = dplyr::select(., X25.501:X50.501) %>% rowSums(na.rm = TRUE))
@@ -102,7 +104,7 @@ clusts_plus_bleach <- clusts_plus_bleach %>%
 ```
 
 
-# Counting total cells
+## Counting total cells
 ```{r}
 clusts_plus_bleach$hist_sum_one <- clusts_plus_bleach$Xone
 clusts_plus_bleach$hist_sum_two <- 2*clusts_plus_bleach$Xtwo
@@ -249,7 +251,7 @@ clusts_plus_bleach$hist_sum <-
 
 ```
 
-# Total cluster count
+## Total cluster count
 ```{r}
 clusts_plus_bleach$hist_count <- 
   clusts_plus_bleach$Xone + 
@@ -323,7 +325,7 @@ clusts_plus_bleach$hist_count <-
   clusts_plus_bleach$X_1900_2000
 ```
 
-# Subset dataset
+## Subset dataset
 ```{r}
 clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9785)
 clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 9793)
@@ -338,7 +340,7 @@ clusts_plus_bleach <- subset(clusts_plus_bleach, sample != 7705)
 
 
 
-# melt data set to long form
+## melt data set to long form
 ```{r}
 
 clusts_plus_long_bleach <- reshape2::melt(clusts_plus_bleach,
@@ -354,7 +356,7 @@ clusts_plus_long_bleach <- reshape2::melt(clusts_plus_bleach,
 ```
 
 
-# Subset into species and temperature specific datasets
+## Subset into species and temperature specific datasets
 ```{r}
 clusts_26A <- subset(clusts_plus_long_bleach, treatment == "A26")
 clusts_26A <- subset(clusts_26A, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
@@ -375,7 +377,7 @@ clusts_32C <- subset(clusts_plus_long_bleach, treatment == "C32")
 clusts_32C <- subset(clusts_32C, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
 ```
 
-# Filtering inaccurate 3d counts
+## Filtering inaccurate 3d counts
 ```{r}
 clusts_32A <- subset(clusts_32A, sample != 9785)
 clusts_32A <- subset(clusts_32A, sample != 9793)
@@ -388,11 +390,10 @@ clusts_26A <- subset(clusts_26A, sample != 9987)
 clusts_26A <- subset(clusts_26A, sample != 7705)
 clusts_26A <- subset(clusts_26A, sample != 8784)
 
-#ggplot(data = clusts_26A, x = day, y = frequency, group = cluster_type) + #stat_summary()
 ```
 
 
-# Subset datasets to common time measurements only
+## Subset datasets to common time measurements only
 ```{r}
 
 #(plots only bleach and nonbleach comparisons)
@@ -409,7 +410,7 @@ clusts_26C <- subset(clusts_26C, day %in% c(4,7,9,11,14,16,18,21,25,31))
 
 
 
-# Figure 5A
+## Figure 5A subset
 
 ```{r}
 
@@ -418,8 +419,8 @@ clusts_plus_bleach_limited <- subset(clusts_plus_bleach_limited, day > 2)
 
 ```
 
-
-# Linear model: growth rate variation differences between anemones in A and D treatments but not B
+# Data for Table 4
+## Linear model: growth rate variation differences between anemones in A and D treatments but not B
 ```{r}
 
 lmBmin <- lm(data = subset(clusts_plus_bleach_limited, treatment == "B26"), hist_sum ~ day)
@@ -443,7 +444,7 @@ confint(lmDtre)
 
 ```
 
-# Linear model
+## Linear model additive
 ```{r}
 
 lmBmin_add <- lm(data = subset(clusts_plus_bleach_limited, treatment == "B26"), hist_sum ~ day + anemone)
@@ -467,6 +468,8 @@ confint(lmDtre_add)
 
 ```
 
+
+## Full linear models
 ```{r}
 
 lmBmin_full <- lm(data = subset(clusts_plus_bleach_limited, treatment == "B26"), hist_sum ~ day * anemone)
@@ -489,7 +492,8 @@ confint(lmDtre_full)
 #R^2 of 0.65
 
 ```
-# full models are statistically best fit
+
+## Full models are statistically best fit
 ```{r}
 anova(lmBmin_full,lmBmin_add)
 anova(lmBmin_add,lmBmin)
@@ -502,23 +506,24 @@ anova(lmDtre_add,lmDtre)
 ```
 
 
-
+## NLS logistic models before day 33 model
 ```{r}
-#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+
 glm.fit.clusts <- nls(hist_sum ~ SSlogis(log(day), Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "B26"))
 summary(glm.fit.clusts)
 
-#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+
 glm.fit.clusts2 <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "B26"))
 summary(glm.fit.clusts2)
 ```
 
+## NLS logistic models all days
 ```{r}
-#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+
 glm.fit.clusts <- nls(hist_sum ~ SSlogis(log(day), Asym, xmid, scal), subset(clusts_plus_bleach, treatment == "B26"))
 summary(glm.fit.clusts)
 
-#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+
 glm.fit.clusts2 <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), subset(clusts_plus_bleach, treatment == "B26"))
 summary(glm.fit.clusts2)
 ```
@@ -526,19 +531,20 @@ summary(glm.fit.clusts2)
 
 
 
-
+## NLS models for A and D species
 
 ```{r}
-#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+
 glm.fit.clustsA <- nls(hist_sum ~ SSlogis(day, Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "A26"))
 summary(glm.fit.clustsA)
 
-#glm.fit.clusts <- glm(hist_sum ~ day, data = clusts_plus_bleach_limited, family = binomial)
+
 glm.fit.clustsD <- nls(hist_sum ~ SSlogis(log(day), Asym, xmid, scal), subset(clusts_plus_bleach_limited, treatment == "C26"))
 summary(glm.fit.clustsD)
 ```
 
 
+## Linear model fits ok with abbreviated timecourse but not with full colonization time-series
 ```{r}
 
 ggplot(subset(clusts_plus_bleach_limited, treatment == "B26"),
@@ -568,7 +574,7 @@ ggplot(subset(clusts_plus_bleach, treatment == "B26"),
   scale_x_continuous(limits = c(0,100)) +
   coord_cartesian(xlim = c(0,100), ylim = c(0,3000)) 
 ```
-
+## biological replicate comparisons
 ```{r}
 
 ggplot(subset(clusts_plus_bleach, treatment == "B26"),
@@ -605,7 +611,7 @@ fig5a_supp <- ggplot(subset(clusts_plus_bleach, treatment == "B26"),
 fig5a_supp
 
 ```
-
+# Figure 5A
 
 ```{r}
 fig5a <- ggplot(subset(clusts_plus_bleach_limited, treatment == "B26"),
@@ -618,14 +624,18 @@ fig5a <- ggplot(subset(clusts_plus_bleach_limited, treatment == "B26"),
   scale_x_continuous(limits = c(0,100)) +
   coord_cartesian(xlim = c(0,35), ylim = c(-100,2500)) +
   theme_linedraw() +
-  ylab("Total sum of cells\n per sample image") +
-  xlab("") 
+  ylab("Total # cells\n per image-stack") +
+  xlab("") +
+  annotate("text", x = c(1), y = c(2325), label='underline("Observed (Exp. 3)")', parse = T, hjust=0, vjust=0) +
+  theme(panel.grid.major = element_line(colour = "grey")) +
+  theme(panel.grid.minor = element_line(colour = "grey"))
+  
 fig5a
 
 ```
 
 
-#Figure 5A log(x)
+## Figure 5A log(x)
 ```{r}
 
 
@@ -691,7 +701,7 @@ fig5a_nolog_facet <- ggplot(subset(clusts_plus_bleach_limited, treatment == "B26
 fig5a_nolog_facet
 
 ```
-
+# Individual fits for individual nls models
 ```{r}
 B01 <- subset(clusts_plus_bleach_limited, anemone == "B26.1")
 B02 <- subset(clusts_plus_bleach_limited, anemone == "B26.2")
@@ -737,6 +747,7 @@ summary(B12.fit)
 
 ```
 
+## resulting asymptotes, midpoints, and scales to input into model
 ```{r}
 asymptoteB <- c(909.0273,1094.558,1539.66,1649.232,1156.496,718.131,4784.066,1082.182,1823.272,1028.765,1439.063,1504.436)
 
@@ -749,7 +760,7 @@ Sample <- c("26B.1.4","26B.2.4","26B.3.4","26B.4.4","26B.5.4","26B.6.4","26B.7.4
 logisdfB <- data.frame(Sample,asymptoteB,midpointB,scaleB)
 ```
 
-
+# Model preparation
 ```{r data set, include=FALSE}
 # set up
 setwd("./summarycsv")
@@ -797,8 +808,7 @@ cluster_init_data %>%
 
 
 
-# Break initial day into new clusters for day 7 growth, apply growth rate to match observed linear model
-# Function
+# Function to break initial day into new clusters for day 7 growth, apply growth rate to match observed logistic model
 
 ```{r migrate cluster logistic function}
 ##_______
@@ -937,6 +947,7 @@ df.final %>%
 write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "postgrowth.csv", sep = "-"))
 
 } else{
+  # no pop growth
   df.final %>% 
   group_by(end.day, sample.name) %>% 
   mutate(sample = sample.name,
@@ -945,7 +956,7 @@ write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "
          model.end.sum = (asymp/(1+exp((midp - end.day)/sca))),
          pop.growth = model.end.sum - start.sum,
          perc.clust = new.cells / start.sum,
-         cells = new.cells + (pop.growth)*perc.clust,
+         cells = new.cells,
          asymptote = asymp,
          midpoint = midp,
          scale = sca,
@@ -981,15 +992,14 @@ return(output.df)
 
 ```
 
-
-
+# Modeling logistic growth no transformation
 ```{r}
 setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
 migrate.cluster.log(cluster_init_data,0.01,4,4,1)
 migrate.cluster.log(output.df,0.01,4,5,1)
 ```
 
-
+## 0.1 migration probability
 ```{r, echo = F, include = F, results = F}
 setwd("./summarycsv/migration_models/logistic growth/mr0.1/")
 migrate.cluster.log(cluster_sample_data_1,0.1,4,4,1)
@@ -1095,7 +1105,7 @@ migrate.cluster.log(output.df,0.1,32,33,3)
 
 ```
 
-
+## 0.015 migration probability
 ```{r, include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.015/")
 migrate.cluster.log(cluster_sample_data_1,0.015,4,4,1)
@@ -1203,7 +1213,7 @@ migrate.cluster.log(output.df,0.015,31,32,3)
 migrate.cluster.log(output.df,0.015,32,33,3)
 
 ```
-
+## 0.01 migration probability
 ```{r, include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
 migrate.cluster.log(cluster_sample_data_1,0.01,4,4,1)
@@ -1312,7 +1322,7 @@ migrate.cluster.log(output.df,0.01,32,33,3)
 
 ```
 
-
+## 0.02 migration probability
 
 ```{r, include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.02/")
@@ -1423,7 +1433,7 @@ migrate.cluster.log(output.df,0.02,32,33,3)
 
 ```
 
-
+## 0.03 migration probability
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.03/")
 migrate.cluster.log(cluster_sample_data_1,0.03,4,4,1)
@@ -1532,7 +1542,7 @@ migrate.cluster.log(output.df,0.03,32,33,3)
 ```
 
 
-
+## 0.04 migration probability
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.04/")
 migrate.cluster.log(cluster_sample_data_1,0.04,4,4,1)
@@ -1640,7 +1650,7 @@ migrate.cluster.log(output.df,0.04,32,33,3)
 
 ```
 
-
+## 0.0 migration probability
 
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.0/")
@@ -1749,6 +1759,7 @@ migrate.cluster.log(output.df,0.0,32,33,3)
 
 ```
 
+## 0.005 migration probability
 
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/logistic growth/mr0.005/")
@@ -1857,6 +1868,7 @@ migrate.cluster.log(output.df,0.005,32,33,3)
 
 ```
 
+## 0.07 migration probability
 
 ```{r, echo = F, include = F, results = F}
 setwd("./summarycsv/migration_models/logistic growth/mr0.07/")
@@ -1982,51 +1994,50 @@ migrate.cluster.log(output.df,0.07,32,33,3)
 
 
 
-# Data for Figure B
+# Data Analysis for logistic growth with no growth rate transformation
 
-# Start here
 ```{r}
 setwd("./summarycsv/migration_models/logistic growth/mr0.1/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.1 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.015/")
+setwd("../mr0.015/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.015 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.01/")
+setwd("../mr0.01/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.01 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.005/")
+setwd("../mr0.005/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.005 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.0/")
+setwd("../mr0.0/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.0 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.02/")
+setwd("../mr0.02/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.02 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.03/")
+setwd("../mr0.03/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.03 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.04/")
+setwd("../mr0.04/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.04 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/logistic growth/mr0.07/")
+setwd("../mr0.07/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.07 <- rbindlist(migrationmodels.read, fill = T)
@@ -2071,7 +2082,7 @@ breaks_names = seq(1,1999,1)
 ```
 
 
-# Create frequency table
+## Create frequency table
 ```{r}
 
 migrationmodelcombine.log$migrate.rate <- as.factor(migrationmodelcombine.log$migrate.rate)
@@ -2084,7 +2095,7 @@ group_by(sample.name, Subsample, end.day, migrate.rate) %>%
 
 
 
-# turn frequency table into histogram summary table
+## turn frequency table into histogram summary table
 
 ```{r}
 migrationmodel_sum.log <- migrationmodelcombine2.log %>%
@@ -2098,7 +2109,7 @@ arrange(migrationmodel_sum.log, histgroup)
 #df_lm_model_sum$histgroup <- paste("X",df_lm_model_sum$histgroup, sep = "")
 
 ```
-# pivot to wide
+## pivot to wide
 ```{r}
 migrationmodel_sum_wide.log <- migrationmodel_sum.log %>% 
     pivot_wider(names_from = histgroup, values_from = frequency, values_fill = 0, names_sort = T)
@@ -2143,7 +2154,7 @@ migrationmodel_sum_wide.log <- migrationmodel_sum_wide.log %>%
 
 
 
-# hist sums
+## hist sums
 
 ```{r}
 migrationmodel_sum_wide.log %>% 
@@ -2165,7 +2176,7 @@ migrationmodel_sum_wide.log$hist_sum <- histsumsubset$hist_sum
 
 
 
-# convert short to long df
+## convert short to long df
 ```{r}
 
 migrationmodel_log_pop_long <- reshape2::melt(migrationmodel_sum_wide.log,
@@ -2192,7 +2203,7 @@ mm_log_migrate_one$day <- mm_log_migrate_one$day_post_inoc
 
 
 
-# clusts 26B
+## clusts 26B merged data set
 ```{r}
 clusts_26B_modelmerge <- subset(clusts_plus_long_bleach, treatment == "B26")
 clusts_26B_modelmerge <- subset(clusts_26B_modelmerge, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
@@ -2205,18 +2216,9 @@ clusts_26B_modelmerge$end.day <- clusts_26B_modelmerge$day
 clusts_26B_modelmerge$migrate.rate <- "observed"
 clusts_26B_modelmerge$migrate.rate <- as.factor(clusts_26B_modelmerge$migrate.rate)
 
-#clusts_26B_modelmerge_hist$end.day <- clusts_26B_modelmerge_hist$day
-#clusts_26B_modelmerge_hist$migrate.rate <- "observed"
-#clusts_26B_modelmerge_hist$migrate.rate <- as.factor(clusts_26B_modelmerge_hist$migrate.rate)
-
-#clusts_26B_hist_modelmerge <- clusts_26B_hist
-#clusts_26B_hist_modelmerge$end.day <- clusts_26B_hist_modelmerge$day
-#clusts_26B_hist_modelmerge$migrate.rate <- "observed"
-#clusts_26B_hist_modelmerge$migrate.rate <- as.factor(clusts_26B_hist_modelmerge$migrate.rate)
-
 ```
 
-#clusts 26B model merge
+## clusts 26B model merge
 ```{r}
 
 mm_log_migrate_one.subset3 <- dplyr::filter(mm_log_migrate_one, migrate.rate == 0.0 | migrate.rate == 0.01 | migrate.rate == 0.02 |  migrate.rate == 0.015)
@@ -2236,38 +2238,7 @@ names(cluster.labs) <- c("B", "C", "D")
 ```
 
 
-
-
-
-```{r}
-fig5e <- ggplot(subset(migrationmodel_sum_wide.log, migrate.rate == 0.01),
-       aes(x=end.day, y=(hist_sum))) +
-  geom_boxplot(aes(group = end.day), fill = "peachpuff", color = "peachpuff4") +
-  #geom_smooth(method = loess, color = "black", linetype = "dotted", se = F) +
-  geom_smooth(method = lm, color = "#59422d", linetype = "dotted", se = F, fullrange = TRUE) +
-  stat_smooth(method = "nls",
-              formula = y ~ SSlogis(x, Asym, xmid, scal),
-              se = FALSE,
-              method.args = list(start = list(Asym = 1293.9831, xmid = 16.6066, scal = 6.3934)), color = "#59422d", linetype = "dashed", fullrange = TRUE) +
-  scale_x_continuous(limits = c(0,100)) +
-  coord_cartesian(xlim = c(0,70), ylim = c(-100,3000)) +
-  theme_linedraw() +
-  ylab("Total sum of clusters\n per sample image") +
-  xlab("Days post inoculation") +
-  facet_wrap(~ sample.name)
-
-fig5e
-
-```
-
-
-
-
-
-
-
-
-# subsets
+## subsets
 ```{r}
 
 mm_log_migrate_one.subset3day <- mm_log_migrate_one[mm_log_migrate_one$end.day %in% c(4,7,9,11,14,16,18,21,25,29,31),]
@@ -2284,13 +2255,11 @@ mm_log_migrate_one.subset3.1 <- subset(mm_log_migrate_one.subset3day, migrate.ra
 ```
 
 
+# Square root transformation of population distribution across clusters
 
 ## try promoting growth within smaller clusters and slowing growth in larger clusters
 
-
-
-# Break initial day into new clusters for day 7 growth, apply growth rate to match observed linear model
-# Function
+## Function to break initial day into new clusters for day 7 growth, apply growth rate to match observed linear model
 
 ```{r migrate cluster logistic function}
 ##_______
@@ -2445,7 +2414,7 @@ write.csv(output.df, file = paste(migrate.rate, start.day, end.day, subsample, "
          tsqrt = (new.cells)^(1/4),
          tsqrtnorm = tsqrt/sum(tsqrt),
          
-         cells = new.cells + (pop.growth)*tsqrtnorm,
+         cells = new.cells,
          asymptote = asymp,
          midpoint = midp,
          scale = sca,
@@ -2482,6 +2451,7 @@ return(output.df)
 ```
 
 
+## 0.1 rate sqrt transformation
 
 ```{r, echo = F, include = F, results = F}
 setwd("./summarycsv/migration_models/sqrt/mr0.1/")
@@ -2588,7 +2558,7 @@ migrate.cluster.log.sqrt(output.df,0.1,32,33,3)
 
 ```
 
-
+## 0.015 rate sqrt transformation
 ```{r, include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.015/")
 migrate.cluster.log.sqrt(cluster_sample_data_1,0.015,4,4,1)
@@ -2696,7 +2666,7 @@ migrate.cluster.log.sqrt(output.df,0.015,31,32,3)
 migrate.cluster.log.sqrt(output.df,0.015,32,33,3)
 
 ```
-
+## 0.01 rate sqrt transformation
 ```{r, include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.01/")
 migrate.cluster.log.sqrt(cluster_sample_data_1,0.01,4,4,1)
@@ -2806,7 +2776,7 @@ migrate.cluster.log.sqrt(output.df,0.01,32,33,3)
 ```
 
 
-
+## 0.02 rate sqrt transformation
 ```{r, include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.02/")
 migrate.cluster.log.sqrt(cluster_sample_data_1,0.02,4,4,1)
@@ -2916,7 +2886,7 @@ migrate.cluster.log.sqrt(output.df,0.02,32,33,3)
 
 ```
 
-
+## 0.03 rate sqrt transformation
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.03/")
 migrate.cluster.log.sqrt(cluster_sample_data_1,0.03,4,4,1)
@@ -3024,7 +2994,7 @@ migrate.cluster.log.sqrt(output.df,0.03,32,33,3)
 
 ```
 
-
+## 0.04 rate sqrt transformation
 
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.04/")
@@ -3133,7 +3103,7 @@ migrate.cluster.log.sqrt(output.df,0.04,32,33,3)
 
 ```
 
-
+## 0.0 rate sqrt transformation
 
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.0/")
@@ -3242,7 +3212,7 @@ migrate.cluster.log.sqrt(output.df,0.0,32,33,3)
 
 ```
 
-
+## 0.005 rate sqrt transformation
 ```{r,include=FALSE, results= FALSE}
 setwd("./summarycsv/migration_models/sqrt/mr0.005/")
 migrate.cluster.log.sqrt(cluster_sample_data_1,0.005,4,4,1)
@@ -3350,6 +3320,7 @@ migrate.cluster.log.sqrt(output.df,0.005,32,33,3)
 
 ```
 
+## 0.07 rate sqrt transformation
 
 ```{r, echo = F, include = F, results = F}
 setwd("./summarycsv/migration_models/sqrt/mr0.07/")
@@ -3476,49 +3447,50 @@ migrate.cluster.log.sqrt(output.df,0.07,32,33,3)
 
 
 
-# Start here
+# Square root transformation dataset 
+## Start here
 ```{r}
 setwd("./summarycsv/migration_models/sqrt/mr0.1/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.1 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.015/")
+setwd("../mr0.015/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.015 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.01/")
+setwd("../mr0.01/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.01 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.005/")
+setwd("../mr0.005/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.005 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.0/")
+setwd("../mr0.0/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.0 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.02/")
+setwd("../mr0.02/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.02 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.03/")
+setwd("../mr0.03/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.03 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.04/")
+setwd("../mr0.04/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.04 <- rbindlist(migrationmodels.read, fill = T)
 
-setwd("./summarycsv/migration_models/sqrt/mr0.07/")
+setwd("../mr0.07/")
 migrationmodels.list = list.files(pattern = ".csv")
 migrationmodels.read = lapply(migrationmodels.list, read.csv, header=T, stringsAsFactors = F)
 migrationmodel.log.0.07 <- rbindlist(migrationmodels.read, fill = T)
@@ -3574,7 +3546,7 @@ group_by(sample.name, Subsample, end.day, migrate.rate) %>%
 
 
 
-# turn frequency table into histogram summary table
+## turn frequency table into histogram summary table
 
 ```{r}
 migrationmodel_sum.log.sqrt <- migrationmodelcombine2.log.sqrt %>%
@@ -3588,7 +3560,7 @@ arrange(migrationmodel_sum.log.sqrt, histgroup)
 #df_lm_model_sum$histgroup <- paste("X",df_lm_model_sum$histgroup, sep = "")
 
 ```
-# pivot to wide
+## pivot to wide
 ```{r}
 migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum.log.sqrt %>% 
     pivot_wider(names_from = histgroup, values_from = frequency, values_fill = 0, names_sort = T)
@@ -3633,7 +3605,7 @@ migrationmodel_sum_wide.log.sqrt <- migrationmodel_sum_wide.log.sqrt %>%
 
 
 
-# hist sums
+## hist sums
 
 ```{r}
 migrationmodel_sum_wide.log.sqrt %>% 
@@ -3655,7 +3627,7 @@ migrationmodel_sum_wide.log.sqrt$hist_sum <- histsumsubset$hist_sum
 
 
 
-# convert short to long df
+## convert short to long df
 ```{r}
 
 migrationmodel_log_pop_long.sqrt <- reshape2::melt(migrationmodel_sum_wide.log.sqrt,
@@ -3678,7 +3650,7 @@ mm_log_migrate_one.sqrt$day <- mm_log_migrate_one.sqrt$day_post_inoc
 
 
 
-# clusts 26B
+## clusts 26B
 ```{r}
 clusts_26B_modelmerge <- subset(clusts_plus_long_bleach, treatment == "B26")
 clusts_26B_modelmerge <- subset(clusts_26B_modelmerge, (cluster_type %in% c("Xone","Xtwo","Xthreefour","X5to10","Xover10")))
@@ -3689,18 +3661,10 @@ clusts_26B_modelmerge$end.day <- clusts_26B_modelmerge$day
 clusts_26B_modelmerge$migrate.rate <- "observed"
 clusts_26B_modelmerge$migrate.rate <- as.factor(clusts_26B_modelmerge$migrate.rate)
 
-#clusts_26B_modelmerge_hist$end.day <- clusts_26B_modelmerge_hist$day
-#clusts_26B_modelmerge_hist$migrate.rate <- "observed"
-#clusts_26B_modelmerge_hist$migrate.rate <- as.factor(clusts_26B_modelmerge_hist$migrate.rate)
-
-#clusts_26B_hist_modelmerge <- clusts_26B_hist
-#clusts_26B_hist_modelmerge$end.day <- clusts_26B_hist_modelmerge$day
-#clusts_26B_hist_modelmerge$migrate.rate <- "observed"
-#clusts_26B_hist_modelmerge$migrate.rate <- as.factor(clusts_26B_hist_modelmerge$migrate.rate)
 
 ```
 
-#clusts 26B model merge
+## clusts 26B model merge
 ```{r}
 
 mm_log_migrate_one.sqrt.subset3 <- dplyr::filter(mm_log_migrate_one.sqrt, migrate.rate == 0.0 | migrate.rate == 0.01 | migrate.rate == 0.02 |  migrate.rate == 0.015)
@@ -3720,7 +3684,7 @@ names(cluster.labs) <- c("B", "C", "D")
 
 
 
-
+# faceted data to accompany figure 5B
 ```{r}
 fig5b_facet <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0.01),
        aes(x=end.day, y=(hist_sum))) +
@@ -3741,8 +3705,9 @@ fig5b_facet <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0
 fig5b_facet
 ```
 
+# Figure 5B - simulated population data summary
 ```{r}
-fig5b <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0.015 & end.day %in% c(4,7,9,11,14,16,18,21,25,29,31)),
+fig5b <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0.01 & end.day %in% c(4,7,9,11,14,16,18,21,25,29,31)),
        aes(x=end.day, y=(hist_sum))) +
   geom_boxplot(aes(group = end.day), fill = "peachpuff", color = "peachpuff4") +
   stat_smooth(method = "nls",
@@ -3752,8 +3717,11 @@ fig5b <- ggplot(subset(migrationmodel_sum_wide.log.sqrt, migrate.rate == 0.015 &
   scale_x_continuous(limits = c(0,100)) +
   coord_cartesian(xlim = c(0,35), ylim = c(-100,2500)) +
   theme_linedraw() +
-  ylab("Total sum of cells\n per sample image") +
-  xlab("Days post inoculation")
+  ylab("Total # cells\n per image-stack") +
+  xlab("Days post inoculation") +
+    annotate("text", x = c(1), y = c(2325), label='underline("Simulated (Exp. 3)")', parse = T, hjust=0, vjust=0) +
+  theme(panel.grid.major = element_line(colour = "grey")) +
+  theme(panel.grid.minor = element_line(colour = "grey"))
 
 fig5b
 ```
@@ -3765,7 +3733,7 @@ fig5b
 
 
 
-# subsets
+## subsets
 ```{r}
 
 mm_log_migrate_one.subset3day.sqrt <- mm_log_migrate_one.sqrt[mm_log_migrate_one.sqrt$end.day %in% c(4,7,9,11,14,16,18,21,25,29,31),]
@@ -3787,331 +3755,111 @@ mm_log_migrate_one.subset3.1.sqrt <- subset(mm_log_migrate_one.subset3day.sqrt, 
 
 
 
-# newplot final log(x) v x
+# Plots for Figure 5CDEF
+## Figure 5C
 ```{r}
-newplot0.01 <- ggplot(mm_log_migrate_one.subset3.01,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+newplot0.orig <- ggplot(clusts_26B_modelmerge,aes(x=end.day,y=frequency,fill=cluster_type)) + 
  
   stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 1, width = 1.25) +
+  theme_linedraw() +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters      \n per image-stack     ") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,85)) + 
   scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
+  annotate("text", x = c(2), y = c(70), label='underline("Observed population growth")', parse = T, hjust=0, vjust=0) +
+  theme(panel.grid.major = element_line(colour = "grey")) +
+  theme(panel.grid.minor = element_line(colour = "grey"))
 
-newplot0.01
-
-newplot0.01.sqrt <- ggplot(mm_log_migrate_one.subset3.01.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.01.sqrt
+newplot0.orig
 ```
-
-
-```{r}
-newplot0.0.sqrt <- ggplot(mm_log_migrate_one.subset3.0.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.0.sqrt
-```
-```{r}
-newplot0.005 <- ggplot(mm_log_migrate_one.subset3.005,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.005
-
-newplot0.005.sqrt <- ggplot(mm_log_migrate_one.subset3.005.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.005.sqrt
-```
-
-```{r}
-newplot0.05 <- ggplot(mm_log_migrate_one.subset3.05,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.05
-
-newplot0.05.sqrt <- ggplot(mm_log_migrate_one.subset3.05.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.05.sqrt
-```
-
-```{r}
-newplot0.02 <- ggplot(mm_log_migrate_one.subset3.02,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.02
-
-newplot0.02.sqrt <- ggplot(mm_log_migrate_one.subset3.02.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.02.sqrt
-```
-```{r}
-newplot0.03 <- ggplot(mm_log_migrate_one.subset3.03,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.03
-
-newplot0.03.sqrt <- ggplot(mm_log_migrate_one.subset3.03.sqrt,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-150,156)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.03.sqrt
-```
-
-
-
-
-```{r}
-newplot_obs <- ggplot(clusts_26B_modelmerge,aes(x=end.day,y=frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,120)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot_obs
-```
-
-
-```{r}
-newplot0.015 <- ggplot(mm_log_migrate_one.subset3.015,aes(x=end.day,y=frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,120)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.015
-```
-
-```{r}
-newplot0.015.sqrt <- ggplot(mm_log_migrate_one.subset3.015.sqrt,aes(x=end.day,y=frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,120)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.015.sqrt
-```
-
+## Figure 5D
 ```{r}
 newplot0.0 <- ggplot(mm_log_migrate_one.subset3.0,aes(x=end.day,y=frequency,fill=cluster_type)) + 
  
   stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3to4","5to10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,150)) + 
-  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(40), label='underline("Observed population (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-140), label='underline("Logistic population model (1% migration + cluster-size dependent growth rate)")', parse = T, hjust=0, vjust=0) 
-
-newplot0.0
-```
-
-```{r}
-newplot0.0 <- ggplot(mm_log_migrate_one.subset3.0,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
- 
-  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = clusts_26B_modelmerge, mapping = aes(x=day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 1, width = 1.25) +
+  theme_linedraw() +
 scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters      \n per image-stack     ") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-25,95)) + 
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,85)) + 
   scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(82), label='underline("observed population growth (26˚C)")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-29), label='underline("population growth without migration")', parse = T, hjust=0, vjust=0) 
+  annotate("text", x = c(2), y = c(70), label='underline("Model 1: no migration, uniform growth")', parse = T, hjust=0, vjust=0) +
+  theme(panel.grid.major = element_line(colour = "grey")) +
+  theme(panel.grid.minor = element_line(colour = "grey"))
 
 newplot0.0
 ```
+## Figure 5E
 ```{r}
-newplot0.015comp <- ggplot(mm_log_migrate_one.subset3.015,aes(x=end.day,y=-frequency,fill=cluster_type)) + 
+newplot0.01 <- ggplot(mm_log_migrate_one.subset3.01,aes(x=end.day,y=frequency,fill=cluster_type)) + 
  
   stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 0.5, width = 1.25) +
-  stat_summary(data = mm_log_migrate_one.subset3.015.sqrt, mapping = aes(x=end.day,y=frequency,fill=cluster_type), fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
-    stat_summary(data = mm_log_migrate_one.subset3.015.sqrt, mapping = aes(x=end.day,y=frequency,fill=cluster_type), fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", width = 1.25) +
-  theme_linedraw() + coord_cartesian(xlim = c(2.75,31.25)) +
-scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters \n per image-stack") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
-  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(-110,92)) + 
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 1, width = 1.25) +
+  theme_linedraw() +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters      \n per image-stack     ") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,85)) + 
   scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
-  annotate("text", x = c(0), y = c(105), label="", hjust=0, vjust=0, fontface = "italic") + scale_alpha(guide=FALSE) + scale_color_manual(values = c("black","purple"), guide=FALSE) +
-  annotate("text", x = c(2), y = c(80), label='underline("cluster density-dependent growth rate")', parse = T, hjust=0, vjust=0) +
-  annotate("text", x = c(2), y = c(-115), label='underline("uniform growth rate")', parse = T, hjust=0, vjust=0) +
-  xlab("Days post inoculation")
+  annotate("text", x = c(2), y = c(70), label='underline("Model 2: migration, uniform growth")', parse = T, hjust=0, vjust=0) +
+  theme(panel.grid.major = element_line(colour = "grey")) +
+  theme(panel.grid.minor = element_line(colour = "grey"))
 
-newplot0.015comp
+newplot0.01
+```
+
+## Figure 5F
+```{r}
+newplot0.01sqrt <- ggplot(mm_log_migrate_one.subset3.01.sqrt,aes(x=end.day,y=frequency,fill=cluster_type)) + 
+ 
+  stat_summary(fun.data=mean_se,position=position_dodge(1.75),geom="errorbar",color = "black", width=1.25) +
+    stat_summary(fun=mean,position=position_dodge(width=1.75),geom="bar", color = "black", alpha = 1, width = 1.25) +
+  theme_linedraw() +
+scale_fill_manual(values = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442"), name = "Cluster size (cells)", labels = c("1","2","3 to 4","5 to 10","over 10")) + ylab("Mean # of clusters      \n per image-stack     ") + scale_x_continuous(limits = c(0,32.9), breaks = c(0,2,4,7,9,11,14,16,18,21,25,31), minor_breaks = seq(0,100,1)) + xlab("Days post inoculation") +
+  scale_color_manual(values = c("black","purple"))+ theme(legend.position="bottom") + guides(fill = guide_legend(nrow=1, byrow=TRUE)) + coord_cartesian(xlim = c(2.75,31.25),ylim =c(0,85)) + 
+  scale_y_continuous(breaks=seq(-1000,1000,by=20),labels=abs(seq(-1000,1000,by=20))) +
+  annotate("text", x = c(2), y = c(70), label='underline("Model 3: migration, density-dependent growth")', parse = T, hjust=0, vjust=0) +
+  theme(panel.grid.major = element_line(colour = "grey")) +
+  theme(panel.grid.minor = element_line(colour = "grey"))
+
+newplot0.01sqrt
 ```
 
 
-
-# end figure:
-# figure 5A, 5B
+# Complete figure:
+## Figure 5A, 5B
 ```{r}
 library(ggpubr)
 plot_figure_5_part1 <- ggarrange( 
                            fig5a, 
+                           NULL,
                            fig5b,
-                       labels = c("A","B"),
-                       ncol = 1, nrow = 2, common.legend = TRUE, 
-                       legend = "none", heights = c(1,1))
+                       labels = c("A","","B"),
+                       ncol = 1, nrow = 3, common.legend = TRUE, 
+                       legend = "none", heights = c(1,-.1,1))
 plot_figure_5_part1
 
 ```
-
+## Figure 5CDEF combined
 ```{r}
 plot_figure_5_part2 <- ggarrange( 
+                           newplot0.orig, 
+                           NULL,
                            newplot0.0, 
                            NULL,
-                           newplot0.015comp,
+                           newplot0.01,
                            NULL,
-                       labels = c("C","","D",""),
-                       ncol = 1, nrow = 4, 
+                           newplot0.01sqrt,
+                       labels = c("C","","D","","E","","F"),
+                       ncol = 1, nrow = 7, 
                        common.legend = TRUE, 
                        legend = "bottom",
-                       heights = c(1.33,-0.1,2,0))
+                       heights = c(1.33,-0.1,1.33,-0.1,1.33,-0.1,1.33))
 plot_figure_5_part2
 
-#ggsave("plot_26_32_abd_clusts3.png", height = 12, width = 8.67)
+ggsave("plot_figure_5_part2a.png", height = 5.5, width = 8.67)
+ggsave("plot_figure_5_part2b.png", height = 7, width = 10)
+ggsave("plot_figure_5_part2c.png", height = 8, width = 8)
 
 ```
-
+# Figure 5 all together
 ```{r}
 plot_figure_5_whole <- ggarrange( 
                            plot_figure_5_part1, 
@@ -4122,6 +3870,27 @@ plot_figure_5_whole <- ggarrange(
                        widths = c(1,2))
 plot_figure_5_whole
 ggsave("plot_figure_5_whole.png", height = 5.5, width = 8.67)
+ggsave("plot_figure_5_whole1.png", height = 7, width = 10)
+ggsave("plot_figure_5_whole2.png", height = 8, width = 8)
+
 ```
+## Figure 5 histogram plots only
+```{r}
+plot_figure_5_part2 <- ggarrange( 
+                           newplot0.orig, 
+                           NULL,
+                           newplot0.0, 
+                           NULL,
+                           newplot0.01,
+                           NULL,
+                           newplot0.01log2,
+                       labels = c("A","","B","","C","","D"),
+                       ncol = 1, nrow = 7, 
+                       common.legend = TRUE, 
+                       legend = "bottom",
+                       heights = c(1.33,-0.1,1.33,-0.1,1.33,-0.1,1.33))
+plot_figure_5_part2
 
+ggsave("revisedfig5.png", height = 8, width = 8)
 
+```
